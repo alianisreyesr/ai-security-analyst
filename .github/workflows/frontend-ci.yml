@@ -6,10 +6,12 @@ on:
       - main
     paths:
       - "frontend/**"
+      - "docker-compose.yml"
       - ".github/workflows/frontend-ci.yml"
   pull_request:
     paths:
       - "frontend/**"
+      - "docker-compose.yml"
       - ".github/workflows/frontend-ci.yml"
 
 permissions:
@@ -34,3 +36,21 @@ jobs:
       - name: Typecheck and build
         working-directory: frontend
         run: npm run build
+
+      - name: Build production dashboard image
+        run: docker build -t ai-security-analyst-frontend:test ./frontend
+
+      - name: Validate root Docker Compose
+        env:
+          POSTGRES_DB: security_analyst
+          POSTGRES_USER: security_analyst
+          POSTGRES_PASSWORD: ci_test_password
+        run: |
+          cat > .env <<'EOF'
+          APP_ENV=development
+          DATABASE_URL=postgresql+psycopg://security_analyst:ci_test_password@db:5432/security_analyst
+          POSTGRES_DB=security_analyst
+          POSTGRES_USER=security_analyst
+          POSTGRES_PASSWORD=ci_test_password
+          EOF
+          docker compose config
