@@ -1,0 +1,338 @@
+[
+  {
+    "timestamp": "2026-09-22T11:55:00Z",
+    "source_ip": "192.0.2.10",
+    "destination_ip": "10.0.0.5",
+    "source_port": 51000,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_success",
+    "username": "demo-user",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "normal-authentication"
+    }
+  },
+  {
+    "timestamp": "2026-09-22T11:56:00Z",
+    "source_ip": "192.0.2.20",
+    "destination_ip": "10.0.0.80",
+    "source_port": 51001,
+    "destination_port": 443,
+    "protocol": "TCP",
+    "event_type": "http_request",
+    "username": null,
+    "source": "nginx",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "normal-web-request",
+      "method": "GET",
+      "path": "/health",
+      "status": 200
+    }
+  },
+  {
+    "timestamp": "2026-09-22T11:57:00Z",
+    "source_ip": "192.0.2.30",
+    "destination_ip": "10.0.0.5",
+    "source_port": 51002,
+    "destination_port": 53,
+    "protocol": "UDP",
+    "event_type": "firewall_allow",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "normal-firewall-traffic"
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:00:00.000Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "10.0.0.5",
+    "source_port": 54000,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_failure",
+    "username": "admin",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "brute-force-demo",
+      "attempt": 1
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:00:20.000Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "10.0.0.5",
+    "source_port": 54001,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_failure",
+    "username": "admin",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "brute-force-demo",
+      "attempt": 2
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:00:40.000Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "10.0.0.5",
+    "source_port": 54002,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_failure",
+    "username": "admin",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "brute-force-demo",
+      "attempt": 3
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:01:00.000Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "10.0.0.5",
+    "source_port": 54003,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_failure",
+    "username": "admin",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "brute-force-demo",
+      "attempt": 4
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:01:20.000Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "10.0.0.5",
+    "source_port": 54004,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_failure",
+    "username": "admin",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "brute-force-demo",
+      "attempt": 5
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:01:40.000Z",
+    "source_ip": "203.0.113.42",
+    "destination_ip": "10.0.0.5",
+    "source_port": 54005,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "authentication_failure",
+    "username": "admin",
+    "source": "linux_ssh",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "brute-force-demo",
+      "attempt": 6
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:00.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55000,
+    "destination_port": 20,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 1
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:08.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55001,
+    "destination_port": 21,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 2
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:16.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55002,
+    "destination_port": 22,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 3
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:24.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55003,
+    "destination_port": 23,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 4
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:32.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55004,
+    "destination_port": 24,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 5
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:40.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55005,
+    "destination_port": 25,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 6
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:48.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55006,
+    "destination_port": 26,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 7
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:05:56.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55007,
+    "destination_port": 27,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 8
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:06:04.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55008,
+    "destination_port": 28,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 9
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:06:12.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55009,
+    "destination_port": 29,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 10
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:06:20.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55010,
+    "destination_port": 30,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 11
+    }
+  },
+  {
+    "timestamp": "2026-09-22T12:06:28.000Z",
+    "source_ip": "198.51.100.77",
+    "destination_ip": "10.0.0.5",
+    "source_port": 55011,
+    "destination_port": 31,
+    "protocol": "TCP",
+    "event_type": "firewall_deny",
+    "username": null,
+    "source": "firewall",
+    "raw_payload": {
+      "synthetic": true,
+      "scenario": "port-scan-demo",
+      "probe": 12
+    }
+  }
+]
