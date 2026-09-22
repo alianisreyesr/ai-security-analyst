@@ -139,3 +139,13 @@ def test_source_anomaly_endpoint_uses_historical_baseline(
     assert payload["current_value"] == 5.0
     assert payload["anomaly_score"] == 60
     assert payload["anomalous"] is True
+
+
+def test_anomaly_threshold_is_configurable() -> None:
+    baseline = compute_baseline([1.0, 1.0, 1.0, 1.0, 1.0])
+
+    result = score_anomaly(5.0, baseline, threshold=80)
+
+    assert result.anomaly_score == 60
+    assert result.threshold == 80
+    assert result.anomalous is False
