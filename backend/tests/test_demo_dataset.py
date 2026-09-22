@@ -27,7 +27,7 @@ def test_synthetic_demo_dataset_exercises_expected_pipeline(client: TestClient) 
         json={"format": "json", "content": json.dumps(events)},
     )
 
-    assert response.status_code == 201
+    assert response.status_code == 200
     assert response.json()["accepted"] == len(events)
     assert response.json()["rejected"] == 0
 
