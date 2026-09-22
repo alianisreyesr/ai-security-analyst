@@ -74,6 +74,14 @@ flowchart LR
 
 See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) for the full product scope and [docs/GITHUB_PROJECT_STRUCTURE.md](docs/GITHUB_PROJECT_STRUCTURE.md) for the GitHub operating model.
 
+## Documentation
+
+- [API reference](docs/API_REFERENCE.md)
+- [Configuration reference](docs/CONFIGURATION.md)
+- [Setup, deployment, persistence, and backup](docs/DEPLOYMENT.md)
+- [Synthetic demo](docs/DEMO.md)
+- [Release quality gate](docs/RELEASE_QUALITY_GATE.md)
+
 ## Engineering principles
 
 - Explainable detection before opaque automation.
