@@ -23,3 +23,24 @@ class SecurityEventAccepted(BaseModel):
     id: int
     status: Literal["accepted"] = "accepted"
     normalized: bool = True
+
+
+class SecurityEventListItem(BaseModel):
+    id: int
+    timestamp: datetime
+    source_ip: str | None
+    destination_ip: str | None
+    source_port: int | None
+    destination_port: int | None
+    protocol: str | None
+    event_type: str
+    username: str | None
+    source: str
+    created_at: datetime
+
+
+class SecurityEventListResponse(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    items: list[SecurityEventListItem]
