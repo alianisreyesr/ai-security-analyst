@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     cors_allowed_origins: str = ""
     allowed_hosts: str = ""
     enable_api_docs: bool = False
+    log_level: str = "INFO"
 
     brute_force_failure_threshold: int = 5
     brute_force_window_seconds: int = 300
