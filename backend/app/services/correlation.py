@@ -9,6 +9,8 @@ from app.core.config import settings
 from app.models.security_case import SecurityCase
 from app.models.threat import Threat
 
+_SUPPORTED_GROUP_KEYS = {"source_ip", "source_ip_rule"}
+
 
 def _utc(value: datetime) -> datetime:
     if value.tzinfo is None:
@@ -24,6 +26,7 @@ def _fingerprint(
 ) -> str:
     raw = "|".join(
         [
+            settings.correlation_group_key,
             source_ip,
             _utc(first_seen).isoformat(),
             _utc(last_seen).isoformat(),
@@ -31,6 +34,19 @@ def _fingerprint(
         ]
     )
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+def _group_value(threat: Threat) -> tuple[str, ...] | None:
+    if not threat.source_ip:
+        return None
+    if settings.correlation_group_key == "source_ip":
+        return (threat.source_ip,)
+    if settings.correlation_group_key == "source_ip_rule":
+        return (threat.source_ip, threat.rule_id)
+    raise ValueError(
+        "Unsupported correlation_group_key. "
+        f"Expected one of {sorted(_SUPPORTED_GROUP_KEYS)}."
+    )
 
 
 def _build_case(
@@ -78,6 +94,7 @@ def _build_case(
             "threat_count": len(threat_ids),
             "distinct_rule_ids": rule_ids,
             "window_seconds": settings.correlation_window_seconds,
+            "correlation_group_key": settings.correlation_group_key,
         },
     )
     db.add(case)
@@ -88,15 +105,17 @@ def correlate_threats(
     db: Session,
     threats: list[Threat],
 ) -> list[SecurityCase]:
-    grouped: dict[str, list[Threat]] = defaultdict(list)
+    grouped: dict[tuple[str, ...], list[Threat]] = defaultdict(list)
     for threat in threats:
-        if threat.source_ip:
-            grouped[threat.source_ip].append(threat)
+        group_value = _group_value(threat)
+        if group_value is not None:
+            grouped[group_value].append(threat)
 
     created_or_existing: list[SecurityCase] = []
     window = timedelta(seconds=settings.correlation_window_seconds)
 
-    for source_ip, source_threats in grouped.items():
+    for group_value, source_threats in grouped.items():
+        source_ip = group_value[0]
         ordered = sorted(
             source_threats,
             key=lambda item: _utc(item.first_seen),
