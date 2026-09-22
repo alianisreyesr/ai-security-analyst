@@ -1,5 +1,7 @@
-from fastapi.testclient import TestClient
+import logging
+
 import pytest
+from fastapi.testclient import TestClient
 
 from app.core.config import settings
 from app.security.auth import validate_security_configuration
@@ -134,6 +136,35 @@ def test_rate_limit(client: TestClient) -> None:
     finally:
         settings.rate_limit_enabled = old_enabled
         settings.rate_limit_requests_per_minute = old_limit
+
+
+def test_audit_log_records_actor_without_secret(
+    client: TestClient,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    old_enabled = settings.auth_enabled
+    old_analyst = settings.analyst_api_key
+    old_admin = settings.admin_api_key
+    try:
+        settings.auth_enabled = True
+        settings.analyst_api_key = "synthetic-analyst-key"
+        settings.admin_api_key = "synthetic-admin-key"
+
+        with caplog.at_level(logging.INFO, logger="ai_security_analyst.audit"):
+            response = client.post(
+                "/api/v1/events",
+                json=EVENT,
+                headers={"X-API-Key": settings.analyst_api_key},
+            )
+
+        assert response.status_code == 201
+        assert "actor=analyst-api-key role=analyst" in caplog.text
+        assert settings.analyst_api_key not in caplog.text
+        assert "authentication_failure" not in caplog.text
+    finally:
+        settings.auth_enabled = old_enabled
+        settings.analyst_api_key = old_analyst
+        settings.admin_api_key = old_admin
 
 
 def test_production_requires_authentication() -> None:
