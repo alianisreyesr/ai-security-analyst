@@ -1,5 +1,7 @@
 # ruff: noqa: I001
 
+from datetime import UTC, datetime
+
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -57,7 +59,7 @@ def test_list_events_is_paginated_and_filterable(
     db_session: Session,
 ) -> None:
     first = SecurityEvent(
-        timestamp="2026-09-21T20:32:14+00:00",
+        timestamp=datetime(2026, 9, 21, 20, 32, 14, tzinfo=UTC),
         source_ip="203.0.113.10",
         destination_ip="10.0.0.5",
         source_port=50000,
@@ -69,7 +71,7 @@ def test_list_events_is_paginated_and_filterable(
         raw_payload={"synthetic": True},
     )
     second = SecurityEvent(
-        timestamp="2026-09-21T20:33:14+00:00",
+        timestamp=datetime(2026, 9, 21, 20, 33, 14, tzinfo=UTC),
         source_ip="203.0.113.20",
         destination_ip="10.0.0.5",
         source_port=50001,
