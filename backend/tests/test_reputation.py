@@ -1,5 +1,3 @@
-from typing import Any
-
 from sqlalchemy.orm import Session
 
 from app.services.reputation import lookup_ip_reputation
