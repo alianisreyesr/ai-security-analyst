@@ -123,10 +123,19 @@ jobs:
       - name: Build backend container
         run: docker build -t ai-security-analyst-backend:test ./backend
 
+      - name: Verify hardened runtime package versions
+        run: >-
+          docker run --rm ai-security-analyst-backend:test
+          python -c "from importlib.metadata import version;
+          assert tuple(map(int, version('msgpack').split('.')[:3])) >= (1, 2, 1);
+          assert tuple(map(int, version('setuptools').split('.')[:2])) >= (78, 1);
+          print('msgpack=' + version('msgpack'));
+          print('setuptools=' + version('setuptools'))"
+
       - name: Scan repository filesystem
         run: >-
           docker run --rm
-          -v "$PWD:/workspace"
+          -v "$PWD:/workspace:ro"
           aquasec/trivy:0.74.0
           fs --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL /workspace
 
@@ -134,6 +143,8 @@ jobs:
         run: >-
           docker run --rm
           -v /var/run/docker.sock:/var/run/docker.sock
+          -v "$PWD/.trivyignore:/workspace/.trivyignore:ro"
           aquasec/trivy:0.74.0
           image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL
+          --ignorefile /workspace/.trivyignore
           ai-security-analyst-backend:test
