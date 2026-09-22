@@ -75,3 +75,14 @@ def test_dispatcher_selects_supported_parser() -> None:
 
 def test_dispatcher_returns_none_for_unsupported_line() -> None:
     assert parse_log_line("synthetic unsupported line") is None
+
+
+def test_firewall_parser_ignores_unknown_extra_fields() -> None:
+    event = FirewallParser().parse_line(
+        "TIMESTAMP=2026-09-21T20:00:00Z SRC=203.0.113.15 DST=10.0.0.5 "
+        "SPT=50123 DPT=443 PROTO=TCP ACTION=DENY VENDOR_FIELD=synthetic"
+    )
+
+    assert event is not None
+    assert event.destination_port == 443
+    assert event.event_type == "firewall_deny"
