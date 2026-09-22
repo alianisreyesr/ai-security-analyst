@@ -98,7 +98,8 @@ def test_threat_timeline_is_chronological(
     assert response.status_code == 200
     events = response.json()["events"]
     assert [event["id"] for event in events] == [earlier.id, later.id]
-    assert events[0]["timestamp"].endswith("+00:00")
+    parsed_timestamp = datetime.fromisoformat(events[0]["timestamp"].replace("Z", "+00:00"))
+    assert parsed_timestamp.utcoffset() == timedelta(0)
 
 
 def test_threat_list_filters_and_includes_mitre(
