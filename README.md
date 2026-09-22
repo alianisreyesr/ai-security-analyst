@@ -169,13 +169,19 @@ If `.devcontainer/` changes, run **Dev Containers: Rebuild Container**.
 cp .env.example .env
 ```
 
-Change the placeholder database password in `.env`, then start the stack:
+Change the placeholder database password in `.env`, then start the full stack:
 
 ```bash
 docker compose up --build
 ```
 
-The API will be available at `http://localhost:8000`.
+Open the functional dashboard at:
+
+```text
+http://localhost:8080
+```
+
+The FastAPI service remains available at `http://localhost:8000`.
 
 Health check:
 
