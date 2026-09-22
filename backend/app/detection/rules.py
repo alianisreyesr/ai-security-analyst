@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from app.detection.types import DetectionFinding
 from app.models.security_event import SecurityEvent
@@ -8,7 +8,7 @@ from app.models.security_event import SecurityEvent
 def _naive_utc(value: datetime) -> datetime:
     if value.tzinfo is None:
         return value
-    return value.astimezone().replace(tzinfo=None)
+    return value.astimezone(UTC).replace(tzinfo=None)
 
 
 def _best_window(
