@@ -2,6 +2,8 @@ import json
 
 from fastapi.testclient import TestClient
 
+from app.core.config import settings
+
 
 def test_json_batch_ingestion(client: TestClient) -> None:
     content = json.dumps(
@@ -60,3 +62,17 @@ def test_invalid_json_batch_returns_422(client: TestClient) -> None:
     )
 
     assert response.status_code == 422
+
+
+def test_batch_content_limit_is_configurable(
+    client: TestClient,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(settings, "max_batch_content_chars", 10)
+
+    response = client.post(
+        "/api/v1/ingest/batch",
+        json={"format": "txt", "content": "x" * 11},
+    )
+
+    assert response.status_code == 413
