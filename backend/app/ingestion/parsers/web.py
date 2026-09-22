@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from ipaddress import ip_address
 
 from app.ingestion.parsers.base import LogParser
 from app.schemas.security_event import SecurityEventCreate
@@ -21,10 +22,14 @@ class WebAccessParser(LogParser):
             match.group("time"),
             "%d/%b/%Y:%H:%M:%S %z",
         )
+        try:
+            source_ip = ip_address(match.group("ip"))
+        except ValueError:
+            return None
 
         return SecurityEventCreate(
             timestamp=timestamp,
-            source_ip=match.group("ip"),
+            source_ip=source_ip,
             protocol="HTTP",
             event_type="http_request",
             source="web_access",
