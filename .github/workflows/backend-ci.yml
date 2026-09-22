@@ -81,7 +81,10 @@ jobs:
           assert 'security_events' in tables;
           assert 'threats' in tables;
           assert 'threat_analyses' in tables;
-          assert 'ip_reputation_cache' in tables"
+          assert 'ip_reputation_cache' in tables;
+          assert 'analytics_snapshots' in tables;
+          assert 'security_cases' in tables;
+          assert 'threat_reviews' in tables"
 
   docker-build:
     runs-on: ubuntu-latest
