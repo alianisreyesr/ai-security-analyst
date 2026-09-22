@@ -1,8 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
 from app.detection.engine import run_detection
-from app.detection.rules import detect_port_scan, detect_request_burst
 from app.detection.risk import severity_from_score
+from app.detection.rules import detect_port_scan, detect_request_burst
 from app.models.security_event import SecurityEvent
 
 
