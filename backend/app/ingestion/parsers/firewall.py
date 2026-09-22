@@ -1,5 +1,6 @@
 import shlex
 from datetime import datetime
+from ipaddress import ip_address
 
 from app.ingestion.parsers.base import LogParser
 from app.schemas.security_event import SecurityEventCreate
@@ -25,6 +26,8 @@ class FirewallParser(LogParser):
 
         try:
             timestamp = datetime.fromisoformat(values["TIMESTAMP"].replace("Z", "+00:00"))
+            source_ip = ip_address(values["SRC"])
+            destination_ip = ip_address(values["DST"])
             source_port = int(values["SPT"]) if values.get("SPT") else None
             destination_port = int(values["DPT"]) if values.get("DPT") else None
         except ValueError:
@@ -34,8 +37,8 @@ class FirewallParser(LogParser):
 
         return SecurityEventCreate(
             timestamp=timestamp,
-            source_ip=values["SRC"],
-            destination_ip=values["DST"],
+            source_ip=source_ip,
+            destination_ip=destination_ip,
             source_port=source_port,
             destination_port=destination_port,
             protocol=values.get("PROTO"),
