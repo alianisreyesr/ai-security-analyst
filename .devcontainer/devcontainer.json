@@ -4,18 +4,14 @@
   "service": "workspace",
   "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
-  "forwardPorts": [8000, 5432],
+  "forwardPorts": [8000],
   "portsAttributes": {
     "8000": {
       "label": "FastAPI",
       "onAutoForward": "notify"
-    },
-    "5432": {
-      "label": "PostgreSQL",
-      "onAutoForward": "silent"
     }
   },
-  "postCreateCommand": "python -m pip install --upgrade pip && python -m pip install -e './backend[dev]' && cd backend && alembic upgrade head",
+  "postCreateCommand": "cd /workspace/backend && alembic upgrade head",
   "postStartCommand": "cd /workspace/backend && alembic upgrade head",
   "remoteUser": "vscode",
   "customizations": {
