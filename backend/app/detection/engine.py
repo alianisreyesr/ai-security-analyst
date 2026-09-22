@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Callable
 
 from app.detection.rules import (
@@ -7,6 +8,8 @@ from app.detection.rules import (
 )
 from app.detection.types import DetectionFinding
 from app.models.security_event import SecurityEvent
+
+logger = logging.getLogger(__name__)
 
 DetectionRule = Callable[[list[SecurityEvent]], list[DetectionFinding]]
 
@@ -23,5 +26,11 @@ def run_detection(
 ) -> list[DetectionFinding]:
     findings: list[DetectionFinding] = []
     for rule in rules:
-        findings.extend(rule(events))
+        try:
+            findings.extend(rule(events))
+        except Exception:
+            logger.exception(
+                "Detection rule failed without interrupting remaining rules.",
+                extra={"rule": getattr(rule, "__name__", repr(rule))},
+            )
     return findings
