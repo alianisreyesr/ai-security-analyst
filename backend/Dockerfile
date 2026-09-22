@@ -10,7 +10,10 @@ COPY app ./app
 COPY alembic ./alembic
 COPY alembic.ini ./
 
-RUN python -m pip install --no-cache-dir --upgrade pip \
+RUN python -m pip install --no-cache-dir --upgrade \
+      "pip>=26" \
+      "setuptools>=78.1.1" \
+      "msgpack>=1.2.1" \
     && python -m pip install --no-cache-dir .
 
 EXPOSE 8000
