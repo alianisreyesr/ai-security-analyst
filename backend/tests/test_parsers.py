@@ -1,5 +1,6 @@
 from datetime import UTC
 
+from app.ingestion.parsers.dispatcher import parse_log_line
 from app.ingestion.parsers.firewall import FirewallParser
 from app.ingestion.parsers.ssh import SSHAuthParser
 from app.ingestion.parsers.web import WebAccessParser
@@ -60,3 +61,17 @@ def test_parsers_reject_unknown_lines() -> None:
     assert SSHAuthParser(year=2026).parse_line("not an auth log") is None
     assert WebAccessParser().parse_line("not a web access log") is None
     assert FirewallParser().parse_line("not a firewall log") is None
+
+
+def test_dispatcher_selects_supported_parser() -> None:
+    event = parse_log_line(
+        "Sep 21 20:32:14 host sshd[123]: Failed password for admin "
+        "from 203.0.113.42 port 54400 ssh2"
+    )
+
+    assert event is not None
+    assert event.source == "linux_ssh"
+
+
+def test_dispatcher_returns_none_for_unsupported_line() -> None:
+    assert parse_log_line("synthetic unsupported line") is None
