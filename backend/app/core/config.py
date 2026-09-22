@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     app_name: str = "AI Security Analyst"
     app_env: str = "development"
     database_url: str = "sqlite:///./ai_security_analyst.db"
+    max_batch_rows: int = 5000
+    max_batch_content_chars: int = 1_000_000
 
     model_config = SettingsConfigDict(
         env_file=".env",
