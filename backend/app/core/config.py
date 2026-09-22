@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     baseline_min_samples: int = 5
     anomaly_score_threshold: int = 60
     correlation_window_seconds: int = 1800
+    correlation_group_key: str = "source_ip"
     correlation_min_threats: int = 2
 
     model_config = SettingsConfigDict(
