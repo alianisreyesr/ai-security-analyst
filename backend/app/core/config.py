@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     ai_model: str = ""
     ai_timeout_seconds: float = 15.0
     ai_prompt_template_version: str = "v1"
+    reputation_provider: str = "disabled"
+    reputation_base_url: str = ""
+    reputation_api_key: str = ""
+    reputation_timeout_seconds: float = 10.0
+    reputation_cache_ttl_seconds: int = 3600
 
     model_config = SettingsConfigDict(
         env_file=".env",
