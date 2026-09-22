@@ -77,7 +77,9 @@ jobs:
           python -c "import os;
           from sqlalchemy import create_engine, inspect;
           engine=create_engine(os.environ['DATABASE_URL']);
-          assert 'security_events' in inspect(engine).get_table_names()"
+          tables=inspect(engine).get_table_names();
+          assert 'security_events' in tables;
+          assert 'threats' in tables"
 
   docker-build:
     runs-on: ubuntu-latest
