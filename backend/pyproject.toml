@@ -4,12 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ai-security-analyst-backend"
-version = "0.1.0"
+version = "0.3.0"
 description = "Backend API for AI Security Analyst"
 requires-python = ">=3.12"
 dependencies = [
   "alembic>=1.13,<2",
   "fastapi>=0.115,<1",
+  "httpx>=0.27,<1",
   "psycopg[binary]>=3.2,<4",
   "pydantic-settings>=2.6,<3",
   "sqlalchemy>=2.0,<3",
@@ -18,7 +19,6 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-  "httpx>=0.27,<1",
   "mypy>=1.13,<2",
   "pytest>=8.3,<9",
   "pytest-cov>=6,<7",
