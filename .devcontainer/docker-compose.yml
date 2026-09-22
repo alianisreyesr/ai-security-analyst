@@ -1,0 +1,37 @@
+services:
+  workspace:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://security_analyst:security_analyst@db:5432/security_analyst
+      AUTH_ENABLED: "false"
+      ENABLE_API_DOCS: "true"
+      RATE_LIMIT_ENABLED: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: security_analyst
+      POSTGRES_USER: security_analyst
+      POSTGRES_PASSWORD: security_analyst
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U security_analyst -d security_analyst"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - devcontainer_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  devcontainer_postgres_data:
