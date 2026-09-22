@@ -98,12 +98,17 @@ def detect_brute_force(events: list[SecurityEvent]) -> list[DetectionFinding]:
     return findings
 
 
-def detect_port_scan(events: list[SecurityEvent]) -> list[DetectionFinding]:
+def detect_port_scan(
+    events: list[SecurityEvent],
+    excluded_source_ips: set[str] | None = None,
+) -> list[DetectionFinding]:
     firewall_by_source: dict[str, list[SecurityEvent]] = defaultdict(list)
+    excluded = excluded_source_ips or set()
 
     for event in events:
         if (
             event.source_ip
+            and event.source_ip not in excluded
             and event.destination_port is not None
             and event.source == "firewall"
         ):
@@ -144,11 +149,19 @@ def detect_port_scan(events: list[SecurityEvent]) -> list[DetectionFinding]:
     return findings
 
 
-def detect_request_burst(events: list[SecurityEvent]) -> list[DetectionFinding]:
+def detect_request_burst(
+    events: list[SecurityEvent],
+    excluded_source_ips: set[str] | None = None,
+) -> list[DetectionFinding]:
     web_by_source: dict[str, list[SecurityEvent]] = defaultdict(list)
+    excluded = excluded_source_ips or set()
 
     for event in events:
-        if event.source_ip and event.event_type == "http_request":
+        if (
+            event.source_ip
+            and event.source_ip not in excluded
+            and event.event_type == "http_request"
+        ):
             web_by_source[event.source_ip].append(event)
 
     findings: list[DetectionFinding] = []
