@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import UTC, datetime, timedelta
+from typing import TypedDict
 
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
@@ -13,6 +14,13 @@ _GRANULARITY_STEPS = {
     "hour": timedelta(hours=1),
     "day": timedelta(days=1),
 }
+
+
+class BucketData(TypedDict):
+    total: int
+    severity: Counter[str]
+    rules: Counter[str]
+    sources: Counter[str]
 
 
 def ensure_utc(value: datetime) -> datetime:
@@ -69,12 +77,12 @@ def rebuild_threat_snapshots(
     start_utc, end_utc = validate_range(start, end)
     bucket_starts = _bucket_sequence(start_utc, end_utc, granularity)
 
-    bucket_data = {
+    bucket_data: dict[datetime, BucketData] = {
         value: {
             "total": 0,
-            "severity": Counter(),
-            "rules": Counter(),
-            "sources": Counter(),
+            "severity": Counter[str](),
+            "rules": Counter[str](),
+            "sources": Counter[str](),
         }
         for value in bucket_starts
     }
