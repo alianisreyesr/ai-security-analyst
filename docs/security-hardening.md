@@ -85,14 +85,31 @@ The repository should contain only placeholders or empty example values.
 
 ## CI security checks
 
-The release-candidate CI should include:
+The release-candidate CI includes:
 
 - unit/integration tests;
+- static type checking;
 - dependency vulnerability audit;
 - static security analysis;
 - PostgreSQL migration verification;
 - container build;
-- container vulnerability scanning.
+- filesystem and container vulnerability scanning.
+
+### Scanner false-positive policy
+
+Scanner findings are not ignored merely to make CI pass. An ignore is allowed only when the repository contains reproducible evidence that the vulnerable component is not present at runtime in the reported version.
+
+The current Trivy image scan sees stale package metadata from lower Python base-image layers for:
+
+- `GHSA-6v7p-g79w-8964` — reports `msgpack 1.1.2`;
+- `CVE-2025-47273` — reports `setuptools 70.3.0`.
+
+The final runtime image explicitly installs fixed versions and CI verifies them before scanning:
+
+- `msgpack >= 1.2.1`;
+- `setuptools >= 78.1.1`.
+
+Only those two IDs are listed in `.trivyignore`. If runtime-version verification fails, CI fails before Trivy runs. Any new HIGH/CRITICAL finding remains blocking and must be investigated.
 
 ## Mermaid-only architecture rule
 
