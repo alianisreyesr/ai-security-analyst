@@ -162,3 +162,21 @@ textarea { min-height: 430px; resize: vertical; font-family: "SFMono-Regular", C
   .metric-grid { grid-template-columns: 1fr 1fr; }
   .loading-bar { left: 0; }
 }
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #66a9f8;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
