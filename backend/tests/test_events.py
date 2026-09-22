@@ -50,3 +50,46 @@ def test_rejects_unknown_fields(client: TestClient) -> None:
     response = client.post("/api/v1/events", json=invalid_event)
 
     assert response.status_code == 422
+
+
+def test_list_events_is_paginated_and_filterable(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    first = SecurityEvent(
+        timestamp="2026-09-21T20:32:14+00:00",
+        source_ip="203.0.113.10",
+        destination_ip="10.0.0.5",
+        source_port=50000,
+        destination_port=22,
+        protocol="TCP",
+        event_type="authentication_failure",
+        username="admin",
+        source="linux_ssh",
+        raw_payload={"synthetic": True},
+    )
+    second = SecurityEvent(
+        timestamp="2026-09-21T20:33:14+00:00",
+        source_ip="203.0.113.20",
+        destination_ip="10.0.0.5",
+        source_port=50001,
+        destination_port=443,
+        protocol="TCP",
+        event_type="firewall_deny",
+        username=None,
+        source="firewall",
+        raw_payload={"synthetic": True},
+    )
+    db_session.add_all([first, second])
+    db_session.commit()
+
+    response = client.get(
+        "/api/v1/events",
+        params={"event_type": "authentication_failure", "limit": 10},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["total"] == 1
+    assert payload["items"][0]["source_ip"] == "203.0.113.10"
+    assert payload["items"][0]["event_type"] == "authentication_failure"
