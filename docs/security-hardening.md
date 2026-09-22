@@ -57,6 +57,14 @@ The audit logger records:
 
 It deliberately does **not** log request bodies, API keys or provider credentials.
 
+## Health and error signals
+
+- `GET /health` remains intentionally unauthenticated for platform health checks.
+- Every response carries an `X-Request-ID` for request/error correlation.
+- API validation failures return bounded structured HTTP errors rather than raw exceptions.
+- Database persistence failures roll back transactions and return generic server errors without database credentials or SQL details.
+- CI validates application health through tests, database migrations, and container construction.
+
 ## API documentation exposure
 
 Interactive OpenAPI documentation remains available in non-production environments.
