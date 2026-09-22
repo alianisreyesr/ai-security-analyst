@@ -1,0 +1,6 @@
+Sep 21 20:32:14 lab-host sshd[1201]: Failed password for invalid user admin from 203.0.113.42 port 54400 ssh2
+Sep 21 20:32:34 lab-host sshd[1202]: Failed password for root from 203.0.113.42 port 54401 ssh2
+Sep 21 20:32:54 lab-host sshd[1203]: Failed password for admin from 203.0.113.42 port 54402 ssh2
+Sep 21 20:33:14 lab-host sshd[1204]: Failed password for root from 203.0.113.42 port 54403 ssh2
+Sep 21 20:33:34 lab-host sshd[1205]: Failed password for admin from 203.0.113.42 port 54404 ssh2
+Sep 21 20:34:00 lab-host sshd[1206]: Accepted publickey for admin from 203.0.113.42 port 54405 ssh2
