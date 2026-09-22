@@ -1,12 +1,15 @@
 from dataclasses import dataclass
 from statistics import mean, pstdev
+from typing import Literal
 
 from app.core.config import settings
+
+BaselineStatus = Literal["cold_start", "ready"]
 
 
 @dataclass(frozen=True, slots=True)
 class BaselineResult:
-    status: str
+    status: BaselineStatus
     sample_count: int
     mean: float
     stddev: float
