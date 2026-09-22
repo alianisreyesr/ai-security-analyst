@@ -80,7 +80,8 @@ jobs:
           tables=inspect(engine).get_table_names();
           assert 'security_events' in tables;
           assert 'threats' in tables;
-          assert 'threat_analyses' in tables"
+          assert 'threat_analyses' in tables;
+          assert 'ip_reputation_cache' in tables"
 
   docker-build:
     runs-on: ubuntu-latest
