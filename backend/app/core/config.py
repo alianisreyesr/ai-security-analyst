@@ -16,6 +16,12 @@ class Settings(BaseSettings):
     port_scan_window_seconds: int = 300
     request_burst_threshold: int = 50
     request_burst_window_seconds: int = 60
+    ai_provider: str = "disabled"
+    ai_base_url: str = ""
+    ai_api_key: str = ""
+    ai_model: str = ""
+    ai_timeout_seconds: float = 15.0
+    ai_prompt_template_version: str = "v1"
 
     model_config = SettingsConfigDict(
         env_file=".env",
