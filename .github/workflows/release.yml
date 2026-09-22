@@ -1,4 +1,4 @@
-name: Release
+name: Release Validation
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
@@ -63,14 +63,3 @@ jobs:
         with:
           name: ai-security-analyst-${{ steps.version.outputs.value }}
           path: release/
-      - name: Publish release
-        env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.version.outputs.value }}
-        run: |
-          tag="v${VERSION}"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            echo "Release $tag already exists."
-          else
-            gh release create "$tag" --target "$GITHUB_SHA" --title "AI Security Analyst $tag" --notes-file "docs/releases/${tag}.md" "release/ai-security-analyst-${VERSION}.tar.gz" "release/SHA256SUMS"
-          fi

@@ -12,10 +12,19 @@ must match the Python package, FastAPI application, and frontend package.
 5. Confirm all CI and Release workflows pass.
 6. Verify the GitHub Release, source archive, and checksum.
 
-A VERSION change on main triggers the release workflow. It validates metadata,
-runs the coverage gate and frontend build, checks tracked filenames for common
-secret files, packages tracked source with git archive, and creates v<VERSION>.
-Manual dispatch and safe idempotent re-runs are supported.
+A push to main triggers release validation. It checks metadata, runs the coverage
+gate and frontend build, checks tracked filenames for common secret files, and
+packages tracked source with git archive. Manual dispatch and safe re-runs are supported.
+
+After validation is green, an authorized maintainer publishes the immutable tag and
+release from a clean main checkout:
+
+    VERSION="$(cat VERSION)"
+    gh release create "v${VERSION}" --target main --title "AI Security Analyst v${VERSION}" \
+      --notes-file "docs/releases/v${VERSION}.md"
+
+GitHub automatically attaches its source archives. The workflow artifact provides
+the independently generated archive and SHA-256 checksum for verification.
 
 ## Checklist
 
