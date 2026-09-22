@@ -85,6 +85,75 @@ See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) for the full prod
 - Architecture and process diagrams are stored as **Mermaid source with explicit styling/colors**.
 - Blocking/enforcement actions require human review.
 
+## Quick start
+
+### Requirements
+
+- Docker + Docker Compose, or Python 3.12+ and PostgreSQL 17+
+- Git
+
+### Docker setup
+
+```bash
+cp .env.example .env
+```
+
+Change the placeholder database password in `.env`, then start the stack:
+
+```bash
+docker compose up --build
+```
+
+The API will be available at `http://localhost:8000`.
+
+Health check:
+
+```bash
+curl http://localhost:8000/health
+```
+
+Expected response:
+
+```json
+{"status":"healthy"}
+```
+
+Submit the synthetic sample event:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/events \
+  -H "Content-Type: application/json" \
+  --data @samples/events/auth_failure.json
+```
+
+Expected response shape:
+
+```json
+{
+  "id": 1,
+  "status": "accepted",
+  "normalized": true
+}
+```
+
+### Backend development
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e ".[dev]"
+alembic upgrade head
+uvicorn app.main:app --reload
+```
+
+Run tests and linting:
+
+```bash
+pytest --cov=app --cov-report=term-missing
+ruff check .
+```
+
 ## Development workflow
 
 All project changes are currently written directly to `main` by project decision.
