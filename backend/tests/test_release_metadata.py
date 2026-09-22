@@ -12,6 +12,7 @@ def test_release_metadata_is_consistent_and_documented() -> None:
     package = json.loads((ROOT / "frontend/package.json").read_text(encoding="utf-8"))
     app = (ROOT / "backend/app/main.py").read_text(encoding="utf-8")
     assert version == "1.0.0"
+    assert version.count(".") == 2
     assert project["project"]["version"] == version
     assert package["version"] == version
     assert f'version="{version}"' in app
