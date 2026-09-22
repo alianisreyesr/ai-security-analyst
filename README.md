@@ -2,7 +2,7 @@
 
 A portfolio-grade security analysis platform that ingests logs, normalizes events, detects suspicious behavior, calculates explainable risk, and generates analyst-friendly AI summaries.
 
-> **Status:** v0.1 Foundation  
+> **Status:** v0.9 Release Candidate  
 > **License:** MIT
 
 ## Why this project exists
