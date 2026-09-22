@@ -38,6 +38,7 @@ function App() {
   const [apiKey, setApiKeyState] = useState(getApiKey());
   const [format, setFormat] = useState<"json" | "csv" | "log" | "txt">("json");
   const [ingestContent, setIngestContent] = useState(demoJson);
+  const [demoResult, setDemoResult] = useState<{ accepted: number; rules: string[] } | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -67,6 +68,29 @@ function App() {
     void refresh();
   }, [refresh]);
 
+  useEffect(() => {
+    if (!selectedThreat) {
+      return undefined;
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setSelectedThreat(null);
+      }
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [selectedThreat]);
+
+  const initialLoading = loading && apiHealthy === null;
+
   const criticalCount = useMemo(
     () => threats.filter((item) => item.severity.toLowerCase() === "critical").length,
     [threats],
@@ -95,8 +119,10 @@ function App() {
     try {
       const ingested = await api.ingest("json", demoJson);
       const analyzed = await api.analyze();
+      const rules = [...new Set(analyzed.threats.map((threat) => threat.rule_id))].sort();
+      setDemoResult({ accepted: ingested.accepted, rules });
       setActionMessage(
-        `Demo loaded: ${ingested.accepted} events accepted, ${analyzed.threats.length} threats detected.`,
+        `Demo verified: ${ingested.accepted} events accepted and ${rules.length} detection rules observed.`,
       );
       await refresh();
       setView("overview");
@@ -181,7 +207,7 @@ function App() {
         </div>
       </aside>
 
-      <main className="main-content">
+      <main className="main-content" aria-busy={loading}>
         <header className="topbar">
           <div>
             <p className="eyebrow">Security Operations</p>
@@ -197,11 +223,46 @@ function App() {
           </div>
         </header>
 
-        {error && <div className="notice error" role="alert">{error}</div>}
+        {error && (
+          <div className="notice error" role="alert">
+            <span>{error}</span>
+            <button className="notice-action" onClick={() => void refresh()}>Retry</button>
+          </div>
+        )}
         {actionMessage && <div className="notice success" role="status" aria-live="polite">{actionMessage}</div>}
 
-        {view === "overview" && (
+        {initialLoading && <LoadingState />}
+
+        {!initialLoading && view === "overview" && (
           <>
+            <section className="demo-guide panel" aria-labelledby="demo-guide-title">
+              <div className="demo-guide-copy">
+                <p className="eyebrow">Guided investigation</p>
+                <h2 id="demo-guide-title">Verify the security pipeline in one action</h2>
+                <p>
+                  Load 21 synthetic events, run deterministic analysis, then inspect
+                  the evidence behind the expected brute-force and port-scan findings.
+                </p>
+                <div className="demo-steps" aria-label="Demo workflow">
+                  <span><strong>1</strong> Ingest safe events</span>
+                  <span><strong>2</strong> Run detection</span>
+                  <span><strong>3</strong> Inspect evidence</span>
+                </div>
+              </div>
+              <div className="demo-guide-action">
+                <button className="primary-button" onClick={() => void runDemo()} disabled={loading}>
+                  Run guided demo
+                </button>
+                <small>Expected: auth.brute_force + network.port_scan</small>
+                {demoResult && (
+                  <div className="demo-result" role="status" aria-live="polite">
+                    <strong>{demoResult.accepted} events accepted</strong>
+                    <span>{demoResult.rules.join(" · ") || "No detections returned"}</span>
+                  </div>
+                )}
+              </div>
+            </section>
+
             <section className="metric-grid">
               <Metric label="Security events" value={eventTotal} subtext="Normalized events stored" />
               <Metric label="Detected threats" value={threatTotal} subtext="Deterministic detections" />
@@ -271,14 +332,14 @@ function App() {
           </>
         )}
 
-        {view === "events" && (
+        {!initialLoading && view === "events" && (
           <section className="panel">
             <PanelHeader title={`Events (${eventTotal})`} />
             <EventTable events={events} />
           </section>
         )}
 
-        {view === "threats" && (
+        {!initialLoading && view === "threats" && (
           <section className="panel">
             <PanelHeader title={`Threats (${threatTotal})`} />
             {threats.length === 0 ? (
@@ -311,7 +372,7 @@ function App() {
           </section>
         )}
 
-        {view === "ingestion" && (
+        {!initialLoading && view === "ingestion" && (
           <section className="ingestion-layout">
             <div className="panel">
               <PanelHeader title="Batch ingestion" />
@@ -413,7 +474,7 @@ function App() {
             ) : timeline.events.length === 0 ? (
               <p className="muted">No supporting events found.</p>
             ) : (
-              <div className="timeline">
+              <div className="timeline" aria-live="polite">
                 {timeline.events.map((event) => (
                   <div className="timeline-item" key={event.id}>
                     <span />
@@ -473,6 +534,16 @@ function PanelHeader({
   );
 }
 
+function LoadingState() {
+  return (
+    <section className="loading-state" role="status" aria-live="polite">
+      <div className="loading-orb" />
+      <strong>Loading security workspace</strong>
+      <p>Checking the API and retrieving events, threats, and source statistics.</p>
+    </section>
+  );
+}
+
 function EmptyState({ title, detail }: { title: string; detail: string }) {
   return (
     <div className="empty-state">
@@ -490,6 +561,7 @@ function EventTable({ events }: { events: EventItem[] }) {
   return (
     <div className="table-wrap">
       <table>
+        <caption className="sr-only">Normalized security events</caption>
         <thead>
           <tr>
             <th>Time</th>

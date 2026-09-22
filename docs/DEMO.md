@@ -57,3 +57,28 @@ CI loads the canonical dataset through the batch-ingestion API and asserts that
 normal sources remain unflagged while both malicious scenarios produce their
 documented detections. The demo uses the built-in deterministic fallback for AI
 summaries, so no private model provider is required.
+
+## Reviewer walkthrough
+
+1. Start from an empty database and open the dashboard.
+2. Confirm the overview shows a clear empty state instead of placeholder data.
+3. Select **Run guided demo**.
+4. Confirm the result reports 21 accepted events and includes
+   `auth.brute_force` plus `network.port_scan`.
+5. Open **Events** and distinguish the three normal events from suspicious activity.
+6. Open **Threats**, select each finding, and inspect its score, MITRE mapping, and
+   evidence timeline.
+7. Stop the API temporarily and use **Retry** on the visible error state after the
+   service returns.
+
+## Accessibility review
+
+The product UI supports visible keyboard focus, semantic navigation and tables,
+live status/error announcements, descriptive form labels, an explicit loading
+state, reduced-motion preferences, and Escape-to-close for the threat dialog.
+Color is paired with text labels for severity and service status.
+
+No screenshots are required for the reproducible walkthrough. If product
+screenshots are added later, they must show the actual dashboard, contain only
+synthetic data, and include useful alternative text. Architecture remains Mermaid
+source; generated architecture-diagram images are not committed.
