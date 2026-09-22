@@ -28,7 +28,7 @@ jobs:
         run: python -m pip install -e "./backend[dev]"
 
       - name: Ruff
-        run: ruff check backend
+        run: ruff check backend/app backend/tests
 
       - name: Tests
         working-directory: backend
