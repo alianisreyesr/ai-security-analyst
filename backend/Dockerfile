@@ -14,7 +14,8 @@ RUN python -m pip install --no-cache-dir --upgrade \
       "pip>=26" \
       "setuptools>=78.1.1" \
       "msgpack>=1.2.1" \
-    && python -m pip install --no-cache-dir .
+    && python -m pip install --no-cache-dir . \
+    && python -m pip uninstall -y setuptools msgpack
 
 EXPOSE 8000
 
