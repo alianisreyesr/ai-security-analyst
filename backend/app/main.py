@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.api.routes.analysis import router as analysis_router
 from app.api.routes.events import router as events_router
 from app.api.routes.health import router as health_router
 from app.api.routes.ingestion import router as ingestion_router
@@ -17,3 +18,4 @@ app = FastAPI(
 app.include_router(health_router)
 app.include_router(events_router)
 app.include_router(ingestion_router)
+app.include_router(analysis_router)
