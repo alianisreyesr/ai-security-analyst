@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     reputation_api_key: str = ""
     reputation_timeout_seconds: float = 10.0
     reputation_cache_ttl_seconds: int = 3600
+    analytics_max_days: int = 90
+    baseline_min_samples: int = 5
+    anomaly_score_threshold: int = 60
+    correlation_window_seconds: int = 1800
+    correlation_min_threats: int = 2
 
     model_config = SettingsConfigDict(
         env_file=".env",
