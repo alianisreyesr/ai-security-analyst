@@ -1,0 +1,51 @@
+name: Dev Container CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".devcontainer/**"
+      - ".vscode/**"
+      - "backend/**"
+      - ".github/workflows/devcontainer-ci.yml"
+  pull_request:
+    paths:
+      - ".devcontainer/**"
+      - ".vscode/**"
+      - "backend/**"
+      - ".github/workflows/devcontainer-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-devcontainer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Validate Docker Compose
+        run: docker compose -f .devcontainer/docker-compose.yml config
+
+      - name: Build development container
+        run: docker compose -f .devcontainer/docker-compose.yml build workspace
+
+      - name: Start development services
+        run: docker compose -f .devcontainer/docker-compose.yml up -d db workspace
+
+      - name: Apply database migrations inside dev container
+        run: docker compose -f .devcontainer/docker-compose.yml exec -T workspace bash -lc "cd /workspace/backend && alembic upgrade head"
+
+      - name: Run backend tests inside dev container
+        run: docker compose -f .devcontainer/docker-compose.yml exec -T workspace bash -lc "cd /workspace/backend && pytest -q"
+
+      - name: Show container state on failure
+        if: failure()
+        run: docker compose -f .devcontainer/docker-compose.yml ps
+
+      - name: Stop development services
+        if: always()
+        run: docker compose -f .devcontainer/docker-compose.yml down -v
