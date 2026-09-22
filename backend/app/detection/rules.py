@@ -1,6 +1,7 @@
 from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 
+from app.core.config import settings
 from app.detection.types import DetectionFinding
 from app.models.security_event import SecurityEvent
 
@@ -43,10 +44,12 @@ def detect_brute_force(events: list[SecurityEvent]) -> list[DetectionFinding]:
             successes_by_source[event.source_ip].append(event)
 
     findings: list[DetectionFinding] = []
+    brute_window = timedelta(seconds=settings.brute_force_window_seconds)
+    followup_window = timedelta(seconds=settings.auth_followup_window_seconds)
 
     for source_ip, failures in failures_by_source.items():
-        cluster = _best_window(failures, timedelta(minutes=5))
-        if len(cluster) < 5:
+        cluster = _best_window(failures, brute_window)
+        if len(cluster) < settings.brute_force_failure_threshold:
             continue
 
         usernames = sorted({event.username for event in cluster if event.username})
@@ -59,7 +62,8 @@ def detect_brute_force(events: list[SecurityEvent]) -> list[DetectionFinding]:
             "failed_attempts": len(cluster),
             "unique_usernames": len(usernames),
             "usernames": usernames[:20],
-            "window_minutes": 5,
+            "window_seconds": settings.brute_force_window_seconds,
+            "threshold": settings.brute_force_failure_threshold,
         }
         event_ids = [event.id for event in cluster if event.id is not None]
 
@@ -68,13 +72,14 @@ def detect_brute_force(events: list[SecurityEvent]) -> list[DetectionFinding]:
             for event in successes_by_source.get(source_ip, [])
             if _naive_utc(last_seen)
             <= _naive_utc(event.timestamp)
-            <= _naive_utc(last_seen) + timedelta(minutes=5)
+            <= _naive_utc(last_seen) + followup_window
         ]
         if follow_up_successes:
             score = min(100, score + 15)
             title = "Successful login after repeated authentication failures"
             rule_id = "auth.brute_force_success"
             evidence["follow_up_successes"] = len(follow_up_successes)
+            evidence["followup_window_seconds"] = settings.auth_followup_window_seconds
             event_ids.extend(
                 event.id for event in follow_up_successes if event.id is not None
             )
@@ -115,9 +120,10 @@ def detect_port_scan(
             firewall_by_source[event.source_ip].append(event)
 
     findings: list[DetectionFinding] = []
+    window = timedelta(seconds=settings.port_scan_window_seconds)
 
     for source_ip, source_events in firewall_by_source.items():
-        cluster = _best_window(source_events, timedelta(minutes=5))
+        cluster = _best_window(source_events, window)
         ports = sorted(
             {
                 event.destination_port
@@ -125,10 +131,13 @@ def detect_port_scan(
                 if event.destination_port is not None
             }
         )
-        if len(ports) < 10:
+        if len(ports) < settings.port_scan_unique_ports_threshold:
             continue
 
-        score = min(90, 60 + (len(ports) - 10) * 2)
+        score = min(
+            90,
+            60 + (len(ports) - settings.port_scan_unique_ports_threshold) * 2,
+        )
         findings.append(
             DetectionFinding(
                 rule_id="network.port_scan",
@@ -141,7 +150,8 @@ def detect_port_scan(
                 evidence={
                     "unique_destination_ports": len(ports),
                     "destination_ports": ports[:50],
-                    "window_minutes": 5,
+                    "window_seconds": settings.port_scan_window_seconds,
+                    "threshold": settings.port_scan_unique_ports_threshold,
                 },
             )
         )
@@ -165,13 +175,14 @@ def detect_request_burst(
             web_by_source[event.source_ip].append(event)
 
     findings: list[DetectionFinding] = []
+    window = timedelta(seconds=settings.request_burst_window_seconds)
 
     for source_ip, source_events in web_by_source.items():
-        cluster = _best_window(source_events, timedelta(minutes=1))
-        if len(cluster) < 50:
+        cluster = _best_window(source_events, window)
+        if len(cluster) < settings.request_burst_threshold:
             continue
 
-        score = min(85, 50 + (len(cluster) - 50))
+        score = min(85, 50 + (len(cluster) - settings.request_burst_threshold))
         findings.append(
             DetectionFinding(
                 rule_id="web.request_burst",
@@ -183,7 +194,8 @@ def detect_request_burst(
                 event_ids=[event.id for event in cluster if event.id is not None],
                 evidence={
                     "request_count": len(cluster),
-                    "window_minutes": 1,
+                    "window_seconds": settings.request_burst_window_seconds,
+                    "threshold": settings.request_burst_threshold,
                 },
             )
         )
