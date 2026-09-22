@@ -1,10 +1,16 @@
 import json
+from ipaddress import ip_address, ip_network
 from pathlib import Path
 
 from fastapi.testclient import TestClient
 
 
 DEMO_DATASET = Path(__file__).resolve().parents[2] / "samples" / "demo" / "events.json"
+DOCUMENTATION_NETWORKS = (
+    ip_network("192.0.2.0/24"),
+    ip_network("198.51.100.0/24"),
+    ip_network("203.0.113.0/24"),
+)
 
 
 def test_synthetic_demo_dataset_exercises_expected_pipeline(client: TestClient) -> None:
@@ -12,7 +18,10 @@ def test_synthetic_demo_dataset_exercises_expected_pipeline(client: TestClient) 
 
     assert events
     assert all(event["raw_payload"]["synthetic"] is True for event in events)
-    assert {event["source_ip"].split(".")[0:3] for event in []} == set()
+    assert all(
+        any(ip_address(event["source_ip"]) in network for network in DOCUMENTATION_NETWORKS)
+        for event in events
+    )
 
     response = client.post(
         "/api/v1/ingest/batch",
