@@ -8,12 +8,14 @@ on:
       - ".devcontainer/**"
       - ".vscode/**"
       - "backend/**"
+      - "frontend/**"
       - ".github/workflows/devcontainer-ci.yml"
   pull_request:
     paths:
       - ".devcontainer/**"
       - ".vscode/**"
       - "backend/**"
+      - "frontend/**"
       - ".github/workflows/devcontainer-ci.yml"
 
 permissions:
@@ -30,11 +32,31 @@ jobs:
       - name: Validate Docker Compose
         run: docker compose -f .devcontainer/docker-compose.yml config
 
-      - name: Build development container
-        run: docker compose -f .devcontainer/docker-compose.yml build workspace
+      - name: Build development services
+        run: docker compose -f .devcontainer/docker-compose.yml build workspace api
 
-      - name: Start development services
-        run: docker compose -f .devcontainer/docker-compose.yml up -d db workspace
+      - name: Start full development stack
+        run: docker compose -f .devcontainer/docker-compose.yml up -d db workspace api frontend
+
+      - name: Wait for API
+        run: |
+          for attempt in {1..40}; do
+            if curl -fsS http://127.0.0.1:8000/health; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Wait for dashboard
+        run: |
+          for attempt in {1..40}; do
+            if curl -fsS http://127.0.0.1:5173 >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
 
       - name: Apply database migrations inside dev container
         run: docker compose -f .devcontainer/docker-compose.yml exec -T workspace bash -lc "cd /workspace/backend && alembic upgrade head"
@@ -42,9 +64,14 @@ jobs:
       - name: Run backend tests inside dev container
         run: docker compose -f .devcontainer/docker-compose.yml exec -T workspace bash -lc "cd /workspace/backend && pytest -q"
 
+      - name: Build frontend inside dev stack
+        run: docker compose -f .devcontainer/docker-compose.yml exec -T frontend npm run build
+
       - name: Show container state on failure
         if: failure()
-        run: docker compose -f .devcontainer/docker-compose.yml ps
+        run: |
+          docker compose -f .devcontainer/docker-compose.yml ps
+          docker compose -f .devcontainer/docker-compose.yml logs --tail=100 api frontend
 
       - name: Stop development services
         if: always()
