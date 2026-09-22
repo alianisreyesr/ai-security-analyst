@@ -85,6 +85,27 @@ See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) for the full prod
 - Architecture and process diagrams are stored as **Mermaid source with explicit styling/colors**.
 - Blocking/enforcement actions require human review.
 
+## Functional dashboard
+
+The development container now starts the complete local stack automatically:
+
+- PostgreSQL 17
+- FastAPI backend on `http://localhost:8000`
+- React/Vite dashboard on `http://localhost:5173`
+
+After **Dev Containers: Rebuild Container Without Cache**, VS Code should open the dashboard port automatically.
+
+### Fast demo
+
+1. Open `http://localhost:5173`.
+2. Click **Load demo + analyze**.
+3. The UI ingests synthetic brute-force and port-scan events.
+4. The backend runs deterministic analysis.
+5. Open **Threats** to inspect risk scores and MITRE ATT&CK mappings.
+6. Click a threat to inspect its evidence timeline.
+
+The demo uses synthetic documentation ranges (`203.0.113.0/24` and `198.51.100.0/24`) and does not contain production telemetry.
+
 ## Open in Visual Studio Code Dev Container
 
 This repository includes a ready-to-use VS Code Dev Container with Python 3.12 and PostgreSQL 17.
