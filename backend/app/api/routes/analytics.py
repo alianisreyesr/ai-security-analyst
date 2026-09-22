@@ -11,12 +11,17 @@ from app.schemas.analytics import (
     BaselineResponse,
     SourceAnomalyResponse,
 )
+from app.security.auth import require_admin
 from app.services.analytics import rebuild_threat_snapshots, source_anomaly
 
 router = APIRouter(prefix="/api/v1/analytics", tags=["analytics"])
 
 
-@router.post("/rebuild", response_model=AnalyticsRebuildResponse)
+@router.post(
+    "/rebuild",
+    response_model=AnalyticsRebuildResponse,
+    dependencies=[Depends(require_admin)],
+)
 def rebuild_analytics(
     payload: AnalyticsRebuildRequest,
     db: Session = Depends(get_db),
