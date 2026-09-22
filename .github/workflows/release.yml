@@ -35,7 +35,7 @@ jobs:
       - name: Test backend
         working-directory: backend
         env:
-          DATABASE_URL: sqlite+pysqlite:///:memory:
+          DATABASE_URL: "sqlite+pysqlite:///:memory:"
           APP_ENV: test
         run: |
           pip install -e ".[dev]"
