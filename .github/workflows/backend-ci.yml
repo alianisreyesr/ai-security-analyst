@@ -15,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -33,6 +33,29 @@ jobs:
       - name: Tests
         working-directory: backend
         run: pytest --cov=app --cov-report=term-missing
+
+  security-audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+
+      - name: Install backend and security tools
+        run: python -m pip install -e "./backend[dev]"
+
+      - name: Dependency vulnerability audit
+        run: pip-audit --progress-spinner off
+
+      - name: Static security analysis
+        run: bandit -q -r backend/app
 
   postgres-migration:
     runs-on: ubuntu-latest
@@ -56,10 +79,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -72,7 +95,7 @@ jobs:
         working-directory: backend
         run: alembic upgrade head
 
-      - name: Verify security_events table
+      - name: Verify database tables
         run: >-
           python -c "import os;
           from sqlalchemy import create_engine, inspect;
@@ -86,12 +109,27 @@ jobs:
           assert 'security_cases' in tables;
           assert 'threat_reviews' in tables"
 
-  docker-build:
+  docker-security:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build backend container
         run: docker build -t ai-security-analyst-backend:test ./backend
+
+      - name: Scan repository filesystem
+        run: >-
+          docker run --rm
+          -v "$PWD:/workspace"
+          aquasec/trivy:0.74.0
+          fs --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL /workspace
+
+      - name: Scan backend container
+        run: >-
+          docker run --rm
+          -v /var/run/docker.sock:/var/run/docker.sock
+          aquasec/trivy:0.74.0
+          image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL
+          ai-security-analyst-backend:test
