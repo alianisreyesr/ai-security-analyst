@@ -11,6 +11,9 @@ REQUIRED_GUIDES = (
     "docs/DEPLOYMENT.md",
     "docs/RELEASE_QUALITY_GATE.md",
     "docs/UI_ACCESSIBILITY.md",
+    "docs/RELEASING.md",
+    "docs/releases/v1.0.0.md",
+    "PORTFOLIO.md",
 )
 
 
@@ -25,4 +28,4 @@ def test_portfolio_documentation_is_current_and_linked() -> None:
     assert "Planning / v0.1" not in plan
     assert "Tailwind CSS" not in readme
     assert "Tailwind CSS" not in plan
-    assert "v1.0 portfolio release preparation" in readme
+    assert "v1.0.0 stable release" in readme

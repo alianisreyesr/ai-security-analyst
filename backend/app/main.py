@@ -34,7 +34,7 @@ docs_enabled = settings.app_env.lower() != "production" or settings.enable_api_d
 
 app = FastAPI(
     title=settings.app_name,
-    version="0.9.0",
+    version="1.0.0",
     description=(
         "Explainable security-event ingestion and analysis API. "
         "Deterministic evidence remains authoritative."

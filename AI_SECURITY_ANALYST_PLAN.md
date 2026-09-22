@@ -1,6 +1,6 @@
 # AI Security Analyst — Project Scope & Roadmap
 
-> **Status:** v1.0 Portfolio Release preparation — core platform and hardening complete  
+> **Status:** v1.0.0 stable release complete  
 > **Goal:** Build a portfolio-grade security analysis platform that ingests security logs, normalizes events, detects suspicious behavior, calculates risk, and produces analyst-friendly explanations.
 
 ## Product vision
@@ -163,8 +163,7 @@ Polished documentation, demo data, UI, release automation, coverage gate and por
 
 ## Current delivery status
 
-Completed: v0.1, v0.2, v0.3, v0.4, v0.5, and v0.9.
+Completed: v0.1, v0.2, v0.3, v0.4, v0.5, v0.9, and v1.0.
 
-The v1.0 documentation, synthetic dataset, guided product UI, and final CI/coverage
-gate are complete. Release automation/changelog and the final portfolio narrative
-remain before the stable release is tagged.
+The v1.0.0 stable release includes the synthetic dataset, guided product UI,
+quality gate, version validation, release automation, changelog, and portfolio narrative.

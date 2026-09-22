@@ -5,8 +5,8 @@ raw telemetry into explainable, reviewable investigations. It ingests heterogene
 logs, normalizes them into one event contract, applies deterministic detection and
 risk scoring, and uses AI only to explain evidence—not to invent or replace it.
 
-> **Status:** v1.0 portfolio release preparation  
-> **Validated baseline:** 71 tests, 90% backend line coverage  
+> **Status:** v1.0.0 stable release  
+> **Validated baseline:** 73+ tests, at least 85% backend line coverage  
 > **License:** MIT
 
 ## Why it matters
@@ -184,6 +184,9 @@ See [the threat model](docs/THREAT_MODEL.md),
 - [Analytics and correlation](docs/analytics-correlation.md)
 - [Threat intelligence](docs/threat-intelligence.md)
 - [Product UI accessibility review](docs/UI_ACCESSIBILITY.md)
+- [Release process](docs/RELEASING.md)
+- [v1.0.0 release notes](docs/releases/v1.0.0.md)
+- [Portfolio and resume narrative](PORTFOLIO.md)
 - [Contribution workflow](CONTRIBUTING.md)
 
 ## Roadmap status
@@ -196,10 +199,10 @@ See [the threat model](docs/THREAT_MODEL.md),
 | v0.4 | Threat intelligence and MITRE ATT&CK | Complete |
 | v0.5 | Analytics, anomaly detection, and correlation | Complete |
 | v0.9 | Security hardening and release candidate | Complete |
-| v1.0 | Portfolio packaging and stable release | In progress |
+| v1.0 | Portfolio packaging and stable release | Complete |
 
-For v1.0, documentation, the synthetic demo, product UI, and release-quality gate
-are complete. Release automation and the final portfolio narrative remain.
+v1.0.0 completes the documented release gate, synthetic demo, product UI,
+release automation, changelog, and portfolio narrative.
 
 See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) and the
 [v1.0 milestone](https://github.com/alianisreyesr/ai-security-analyst/issues/8).
