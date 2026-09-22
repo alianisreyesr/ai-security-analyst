@@ -76,3 +76,21 @@ def test_batch_content_limit_is_configurable(
     )
 
     assert response.status_code == 413
+
+
+def test_csv_batch_ingestion(client: TestClient) -> None:
+    content = (
+        "timestamp,source_ip,destination_ip,destination_port,protocol,event_type,"
+        "username,source\n"
+        "2026-09-21T20:32:14Z,203.0.113.42,10.0.0.5,22,TCP,"
+        "authentication_failure,admin,linux_ssh\n"
+    )
+
+    response = client.post(
+        "/api/v1/ingest/batch",
+        json={"format": "csv", "content": content},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["accepted"] == 1
+    assert response.json()["rejected"] == 0
