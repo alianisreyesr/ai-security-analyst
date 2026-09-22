@@ -1,3 +1,5 @@
+from typing import cast
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -6,6 +8,7 @@ from app.db.session import get_db
 from app.models.threat import Threat
 from app.models.threat_review import ThreatReview
 from app.schemas.reviews import (
+    ThreatDisposition,
     ThreatReviewCreate,
     ThreatReviewListResponse,
     ThreatReviewResponse,
@@ -44,7 +47,7 @@ def create_review(
     return ThreatReviewResponse(
         id=review.id,
         threat_id=review.threat_id,
-        disposition=review.disposition,
+        disposition=cast(ThreatDisposition, review.disposition),
         rationale=review.rationale,
         reviewer=review.reviewer,
         created_at=review.created_at,
@@ -79,7 +82,7 @@ def list_reviews(
             ThreatReviewResponse(
                 id=review.id,
                 threat_id=review.threat_id,
-                disposition=review.disposition,
+                disposition=cast(ThreatDisposition, review.disposition),
                 rationale=review.rationale,
                 reviewer=review.reviewer,
                 created_at=review.created_at,
