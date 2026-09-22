@@ -1,0 +1,4 @@
+# Trivy reports stale Python package metadata from lower base-image layers.
+# CI independently verifies fixed runtime versions before applying these targeted ignores.
+GHSA-6v7p-g79w-8964
+CVE-2025-47273
