@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.trustedhost import TrustedHostMiddleware
@@ -20,6 +22,11 @@ from app.middleware.security import (
     SecurityHeadersMiddleware,
 )
 from app.security.auth import require_analyst, validate_security_configuration
+
+logging.basicConfig(
+    level=getattr(logging, settings.log_level.upper(), logging.INFO),
+    format="%(asctime)s %(levelname)s %(name)s %(message)s",
+)
 
 validate_security_configuration()
 
