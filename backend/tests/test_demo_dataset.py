@@ -4,7 +4,6 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
-
 DEMO_DATASET = Path(__file__).resolve().parents[2] / "samples" / "demo" / "events.json"
 DOCUMENTATION_NETWORKS = (
     ip_network("192.0.2.0/24"),
