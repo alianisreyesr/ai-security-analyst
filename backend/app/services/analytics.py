@@ -103,7 +103,9 @@ def rebuild_threat_snapshots(
         .where(AnalyticsSnapshot.granularity == granularity)
         .where(AnalyticsSnapshot.bucket_start >= bucket_start(start_utc, granularity))
         .where(AnalyticsSnapshot.bucket_start < end_utc)
+        .execution_options(synchronize_session=False)
     )
+    db.expire_all()
 
     snapshots: list[AnalyticsSnapshot] = []
     for value in bucket_starts:
