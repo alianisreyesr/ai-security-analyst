@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  release:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,13 +25,9 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: "22"
-      - name: Validate version
-        id: version
+      - name: Validate version and tracked files
         run: |
           python scripts/check_version.py
-          echo "value=$(cat VERSION)" >> "$GITHUB_OUTPUT"
-      - name: Reject tracked secret files
-        run: |
           tracked="$(git ls-files)"
           if echo "$tracked" | grep -E '(^|/)(\.env|id_rsa|id_ed25519|credentials\.json)$'; then
             exit 1
@@ -50,16 +46,15 @@ jobs:
           npm install
           npm run typecheck
           npm run build
-      - name: Package source
-        env:
-          VERSION: ${{ steps.version.outputs.value }}
+      - name: Package source and checksum
         run: |
+          version="$(cat VERSION)"
           mkdir release
-          git archive --format=tar.gz --prefix="ai-security-analyst-${VERSION}/" --output="release/ai-security-analyst-${VERSION}.tar.gz" HEAD
+          git archive --format=tar.gz --prefix="ai-security-analyst-${version}/" --output="release/ai-security-analyst-${version}.tar.gz" HEAD
           cd release
-          sha256sum "ai-security-analyst-${VERSION}.tar.gz" > SHA256SUMS
-      - name: Upload artifact
+          sha256sum "ai-security-analyst-${version}.tar.gz" > SHA256SUMS
+      - name: Upload release candidate
         uses: actions/upload-artifact@v4
         with:
-          name: ai-security-analyst-${{ steps.version.outputs.value }}
+          name: ai-security-analyst-release-candidate
           path: release/
