@@ -1,6 +1,6 @@
 # AI Security Analyst — Project Scope & Roadmap
 
-> **Status:** Planning / v0.1 Foundation  
+> **Status:** v1.0 Portfolio Release preparation — core platform and hardening complete  
 > **Goal:** Build a portfolio-grade security analysis platform that ingests security logs, normalizes events, detects suspicious behavior, calculates risk, and produces analyst-friendly explanations.
 
 ## Product vision
@@ -122,7 +122,7 @@ flowchart TD
 - React
 - TypeScript
 - Vite
-- Tailwind CSS
+- Custom responsive CSS
 - Docker / Docker Compose
 - Pytest
 - GitHub Actions
@@ -160,3 +160,11 @@ Polished documentation, demo data, UI, release automation, coverage gate and por
 - Raw logs and normalized events remain distinguishable.
 - AI output never silently overwrites deterministic evidence.
 - Architecture diagrams must use **Mermaid code with explicit styling/colors**.
+
+## Current delivery status
+
+Completed: v0.1, v0.2, v0.3, v0.4, v0.5, and v0.9.
+
+The v1.0 documentation, synthetic dataset, guided product UI, and final CI/coverage
+gate are complete. Release automation/changelog and the final portfolio narrative
+remain before the stable release is tagged.

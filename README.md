@@ -1,253 +1,208 @@
 # AI Security Analyst
 
-A portfolio-grade security analysis platform that ingests logs, normalizes events, detects suspicious behavior, calculates explainable risk, and generates analyst-friendly AI summaries.
+AI Security Analyst is a portfolio-grade security operations platform that turns
+raw telemetry into explainable, reviewable investigations. It ingests heterogeneous
+logs, normalizes them into one event contract, applies deterministic detection and
+risk scoring, and uses AI only to explain evidence—not to invent or replace it.
 
-> **Status:** v0.9 Release Candidate  
+> **Status:** v1.0 portfolio release preparation  
+> **Validated baseline:** 71 tests, 90% backend line coverage  
 > **License:** MIT
 
-## Why this project exists
+## Why it matters
 
-Security teams often work across heterogeneous logs and noisy event streams. This project is designed to turn raw telemetry into a traceable investigation workflow where deterministic evidence remains authoritative and AI helps explain—not invent—the result.
+Security analysts often move between inconsistent logs, noisy alerts, and tools
+that cannot explain why something is risky. This project demonstrates an auditable
+alternative:
+
+- preserve raw context while normalizing fields;
+- detect behavior with testable rules;
+- calculate risk from explicit evidence;
+- map findings to MITRE ATT&CK;
+- keep AI output bounded, validated, and optional;
+- require human judgment before any enforcement action.
+
+## What the product does
+
+- Ingests canonical JSON, CSV, SSH/auth, Apache/Nginx, and firewall records
+- Detects brute-force behavior, successful login after failures, port scans, and
+  high-rate web requests
+- Assigns explainable 0–100 risk scores and severity bands
+- Persists threat evidence, timelines, reviews, analytics snapshots, and cases
+- Adds MITRE ATT&CK mappings and optional IP-reputation context
+- Generates validated analyst summaries with deterministic fallback behavior
+- Correlates related threats and calculates historical anomaly scores
+- Presents events, threats, evidence, and a guided synthetic demo in a React dashboard
+- Protects the API with optional role-based keys, size limits, rate limits, trusted
+  hosts, CORS controls, security headers, and request IDs
 
 ## Architecture
 
 ```mermaid
-flowchart LR
-    A["Log Sources<br/>Linux • Apache/Nginx • Firewall • CSV/JSON"] --> B["FastAPI Ingestion API"]
-    B --> C["Normalization Layer"]
-    C --> D["Detection Engine"]
-    D --> E["Risk Scoring"]
-    E --> F["AI Analyst"]
-    C --> G[("PostgreSQL")]
-    D --> G
-    E --> G
-    F --> G
-    G --> H["React Security Dashboard"]
+flowchart TB
+    S["Security telemetry<br/>JSON • CSV • logs"] --> I["FastAPI ingestion<br/>parse • validate • normalize"]
+    I --> E["Deterministic engine<br/>detect • score • correlate"]
+    E --> D[("PostgreSQL<br/>events • threats • evidence")]
+    D --> X["Context services<br/>MITRE • reputation • AI"]
+    D --> U["React dashboard<br/>investigate • review • demo"]
+    X --> U
 
-    classDef sources fill:#0f172a,stroke:#38bdf8,color:#f8fafc,stroke-width:2px;
-    classDef backend fill:#172554,stroke:#60a5fa,color:#eff6ff,stroke-width:2px;
+    classDef source fill:#0f172a,stroke:#38bdf8,color:#f8fafc,stroke-width:2px;
+    classDef service fill:#172554,stroke:#60a5fa,color:#eff6ff,stroke-width:2px;
     classDef detection fill:#3f1d0b,stroke:#fb923c,color:#fff7ed,stroke-width:2px;
-    classDef ai fill:#3b0764,stroke:#c084fc,color:#faf5ff,stroke-width:2px;
     classDef data fill:#052e16,stroke:#4ade80,color:#f0fdf4,stroke-width:2px;
+    classDef context fill:#3b0764,stroke:#c084fc,color:#faf5ff,stroke-width:2px;
     classDef ui fill:#3f0713,stroke:#fb7185,color:#fff1f2,stroke-width:2px;
 
-    class A sources;
-    class B,C backend;
-    class D,E detection;
-    class F ai;
-    class G data;
-    class H ui;
+    class S source;
+    class I service;
+    class E detection;
+    class D data;
+    class X context;
+    class U ui;
 ```
 
-## Core capabilities
+The deterministic path remains authoritative. Provider failures degrade to explicit
+fallback/unavailable states and do not alter stored evidence or risk scores.
 
-- REST and file-based log ingestion
-- Canonical security-event normalization
-- Deterministic detection rules
-- Explainable 0–100 risk scoring
-- Threat persistence and evidence timelines
-- AI-assisted summaries with validation and fallback behavior
-- MITRE ATT&CK mappings
-- Optional threat-intelligence enrichment
-- Historical analytics, anomaly scoring, and cross-event correlation
-- Human approval before any future blocking/enforcement action
+Read [the architecture guide](docs/ARCHITECTURE.md) for components, trust
+boundaries, persistence, failure behavior, and design decisions.
 
-## Technology
+## Guided demo
 
-**Backend:** Python 3.12+, FastAPI, Pydantic, SQLAlchemy, Alembic  
-**Database:** PostgreSQL  
-**Frontend:** React, TypeScript, Vite, Tailwind CSS  
-**Infrastructure:** Docker, Docker Compose, GitHub Actions  
-**Testing:** Pytest + integration tests
-
-## Roadmap
-
-| Version | Focus |
-|---|---|
-| v0.1 | Foundation & Core Ingestion |
-| v0.2 | Parsing, Detection & Risk Scoring |
-| v0.3 | AI Analyst |
-| v0.4 | Threat Intelligence & MITRE ATT&CK |
-| v0.5 | Analytics, Correlation & Anomaly Detection |
-| v0.9 | Security Hardening & Release Candidate |
-| v1.0 | Portfolio Release |
-
-See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) for the full product scope and [docs/GITHUB_PROJECT_STRUCTURE.md](docs/GITHUB_PROJECT_STRUCTURE.md) for the GitHub operating model.
-
-## Documentation
-
-- [API reference](docs/API_REFERENCE.md)
-- [Configuration reference](docs/CONFIGURATION.md)
-- [Setup, deployment, persistence, and backup](docs/DEPLOYMENT.md)
-- [Synthetic demo](docs/DEMO.md)
-- [Release quality gate](docs/RELEASE_QUALITY_GATE.md)
-
-## Engineering principles
-
-- Explainable detection before opaque automation.
-- AI never silently replaces deterministic evidence.
-- Raw and normalized data remain distinguishable.
-- Sample logs must be synthetic or sanitized.
-- Secrets and production credentials must never be committed.
-- Detection logic must be unit-testable.
-- Architecture and process diagrams are stored as **Mermaid source with explicit styling/colors**.
-- Blocking/enforcement actions require human review.
-
-## Functional dashboard
-
-The development container now starts the complete local stack automatically:
-
-- PostgreSQL 17
-- FastAPI backend on `http://localhost:8000`
-- React/Vite dashboard on `http://localhost:5173`
-
-After **Dev Containers: Rebuild Container Without Cache**, VS Code should open the dashboard port automatically.
-
-### Fast demo
-
-1. Open `http://localhost:5173`.
-2. Click **Load demo + analyze**.
-3. The UI ingests synthetic brute-force and port-scan events.
-4. The backend runs deterministic analysis.
-5. Open **Threats** to inspect risk scores and MITRE ATT&CK mappings.
-6. Click a threat to inspect its evidence timeline.
-
-The demo uses synthetic documentation ranges (`203.0.113.0/24` and `198.51.100.0/24`) and does not contain production telemetry.
-
-## Open in Visual Studio Code Dev Container
-
-This repository includes a ready-to-use VS Code Dev Container with Python 3.12 and PostgreSQL 17.
-
-### Requirements
-
-- Docker Desktop (or a compatible Docker Engine)
-- Visual Studio Code
-- The **Dev Containers** extension
-
-### Open the project
-
-1. Clone the repository and open it in VS Code.
-2. Open the Command Palette with `F1` / `Cmd+Shift+P`.
-3. Run **Dev Containers: Reopen in Container**.
-4. Let VS Code build the development image and start PostgreSQL.
-5. The container automatically runs Alembic migrations.
-
-Once connected, the repository is mounted at:
-
-```text
-/workspace
-```
-
-### Run the API
-
-Use **Run and Debug → FastAPI: Dev Server**, press `F5`, or run:
-
-```bash
-cd /workspace/backend
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-Then open:
-
-```text
-http://localhost:8000/health
-```
-
-### Useful VS Code tasks
-
-Open **Terminal → Run Task** and choose:
-
-- `Backend: Run tests`
-- `Backend: Ruff`
-- `Database: Upgrade`
-- `Backend: Run API`
-
-If `.devcontainer/` changes, run **Dev Containers: Rebuild Container**.
-
-## Quick start
-
-### Requirements
-
-- Docker + Docker Compose, or Python 3.12+ and PostgreSQL 17+
-- Git
-
-### Docker setup
+The repository includes 21 synthetic events using RFC 5737 documentation ranges:
+three normal events, six authentication failures, and twelve firewall probes.
 
 ```bash
 cp .env.example .env
+# Replace POSTGRES_PASSWORD=change_me
+docker compose up --build -d
+python scripts/seed_demo.py
 ```
 
-Change the placeholder database password in `.env`, then start the full stack:
+Open [http://localhost:8080](http://localhost:8080), run the guided investigation,
+then inspect the two expected findings:
+
+- `auth.brute_force`
+- `network.port_scan`
+
+No private telemetry or external AI service is required. See
+[the demo walkthrough](docs/DEMO.md).
+
+## Technology
+
+| Layer | Technologies |
+|---|---|
+| Backend | Python 3.12, FastAPI, Pydantic, SQLAlchemy, Alembic |
+| Database | PostgreSQL 17 |
+| Frontend | React 18, TypeScript, Vite, custom responsive CSS |
+| Runtime | Docker, Docker Compose, Nginx, Uvicorn |
+| Quality | Pytest, pytest-cov, Ruff, mypy |
+| Security CI | pip-audit, Bandit, Trivy |
+| Delivery | GitHub Actions, VS Code Dev Containers |
+
+## Repository structure
+
+```text
+backend/
+  app/
+    api/routes/       HTTP endpoints
+    ingestion/        batch handling and parsers
+    detection/        deterministic rules and risk scoring
+    services/         analysis, reputation, analytics, correlation
+    ai/               provider abstraction and prompt contracts
+    security/         authentication and roles
+    middleware/       request and response protections
+    models/           SQLAlchemy persistence models
+    schemas/          Pydantic API contracts
+  alembic/            database migrations
+  tests/              unit and integration tests
+frontend/
+  src/                React dashboard, API client, and guided demo
+samples/
+  demo/               canonical synthetic dataset
+scripts/
+  seed_demo.py        reproducible ingest-and-verify command
+docs/                 architecture, API, operations, security, and demo guides
+.github/workflows/     backend, frontend, and dev-container CI
+```
+
+## Quick start
+
+Requirements: Git and Docker with the Compose plugin.
 
 ```bash
+git clone https://github.com/alianisreyesr/ai-security-analyst.git
+cd ai-security-analyst
+cp .env.example .env
 docker compose up --build
 ```
 
-Open the functional dashboard at:
+After changing the example database password:
 
-```text
-http://localhost:8080
-```
+- Dashboard: [http://localhost:8080](http://localhost:8080)
+- API health: [http://localhost:8000/health](http://localhost:8000/health)
+- OpenAPI in development: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-The FastAPI service remains available at `http://localhost:8000`.
+For a VS Code workflow, reopen the repository in its Dev Container. It starts
+PostgreSQL, the API, and the Vite dashboard and applies migrations automatically.
 
-Health check:
+## Quality and security posture
 
-```bash
-curl http://localhost:8000/health
-```
+The stable-release gate requires:
 
-Expected response:
+- backend tests with at least 85% line coverage;
+- Ruff and mypy;
+- PostgreSQL migration validation;
+- dependency auditing and static security analysis;
+- filesystem and container vulnerability scans;
+- frontend TypeScript and production-container builds;
+- full-stack Dev Container verification.
 
-```json
-{"status":"healthy"}
-```
+Important design decisions:
 
-Submit the synthetic sample event:
+- Detection and severity never depend solely on AI.
+- Threat fingerprints make repeat analysis idempotent for the same evidence.
+- Raw telemetry and normalized fields remain distinguishable.
+- Provider output is schema-validated and prompt-injection defenses are tested.
+- Production startup requires authentication.
+- Automated IP blocking is intentionally outside the current product boundary.
+- Samples and screenshots may contain synthetic data only.
 
-```bash
-curl -X POST http://localhost:8000/api/v1/events \
-  -H "Content-Type: application/json" \
-  --data @samples/events/auth_failure.json
-```
+See [the threat model](docs/THREAT_MODEL.md),
+[security hardening](docs/SECURITY_HARDENING.md), and
+[release quality gate](docs/RELEASE_QUALITY_GATE.md).
 
-Expected response shape:
+## Documentation
 
-```json
-{
-  "id": 1,
-  "status": "accepted",
-  "normalized": true
-}
-```
+- [Architecture and design decisions](docs/ARCHITECTURE.md)
+- [API reference](docs/API_REFERENCE.md)
+- [Configuration reference](docs/CONFIGURATION.md)
+- [Setup, deployment, persistence, backup, and restore](docs/DEPLOYMENT.md)
+- [Synthetic demo and reviewer walkthrough](docs/DEMO.md)
+- [Detection rules](docs/detection-rules.md)
+- [Analytics and correlation](docs/analytics-correlation.md)
+- [Threat intelligence](docs/threat-intelligence.md)
+- [Product UI accessibility review](docs/UI_ACCESSIBILITY.md)
+- [Contribution workflow](CONTRIBUTING.md)
 
-### Backend development
+## Roadmap status
 
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e ".[dev]"
-alembic upgrade head
-uvicorn app.main:app --reload
-```
+| Version | Outcome | Status |
+|---|---|---|
+| v0.1 | Foundation and ingestion | Complete |
+| v0.2 | Parsing, detection, and risk scoring | Complete |
+| v0.3 | Evidence-aware AI analyst | Complete |
+| v0.4 | Threat intelligence and MITRE ATT&CK | Complete |
+| v0.5 | Analytics, anomaly detection, and correlation | Complete |
+| v0.9 | Security hardening and release candidate | Complete |
+| v1.0 | Portfolio packaging and stable release | In progress |
 
-Run tests and linting:
+For v1.0, documentation, the synthetic demo, product UI, and release-quality gate
+are complete. Release automation and the final portfolio narrative remain.
 
-```bash
-pytest --cov=app --cov-report=term-missing
-ruff check .
-```
-
-## Development workflow
-
-All project changes are currently written directly to `main` by project decision.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Security
-
-This project processes untrusted telemetry and future AI-generated analysis. Review [SECURITY.md](SECURITY.md) before contributing security-sensitive changes.
+See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) and the
+[v1.0 milestone](https://github.com/alianisreyesr/ai-security-analyst/issues/8).
 
 ## License
 
