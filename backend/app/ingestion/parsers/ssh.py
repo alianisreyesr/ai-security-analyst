@@ -1,5 +1,6 @@
 import re
 from datetime import UTC, datetime
+from ipaddress import ip_address
 
 from app.ingestion.parsers.base import LogParser
 from app.schemas.security_event import SecurityEventCreate
@@ -38,9 +39,14 @@ class SSHAuthParser(LogParser):
 
         failed = _FAILED_RE.search(line)
         if failed is not None:
+            try:
+                source_ip = ip_address(failed.group("ip"))
+            except ValueError:
+                return None
+
             return SecurityEventCreate(
                 timestamp=timestamp,
-                source_ip=failed.group("ip"),
+                source_ip=source_ip,
                 destination_port=22,
                 protocol="TCP",
                 event_type="authentication_failure",
@@ -51,9 +57,14 @@ class SSHAuthParser(LogParser):
 
         accepted = _ACCEPTED_RE.search(line)
         if accepted is not None:
+            try:
+                source_ip = ip_address(accepted.group("ip"))
+            except ValueError:
+                return None
+
             return SecurityEventCreate(
                 timestamp=timestamp,
-                source_ip=accepted.group("ip"),
+                source_ip=source_ip,
                 destination_port=22,
                 protocol="TCP",
                 event_type="authentication_success",
