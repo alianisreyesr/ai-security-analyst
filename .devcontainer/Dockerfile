@@ -9,4 +9,10 @@ RUN apt-get update \
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
+COPY backend /tmp/ai-security-analyst-backend
+
+RUN python -m pip install --upgrade pip \
+    && python -m pip install "/tmp/ai-security-analyst-backend[dev]" \
+    && rm -rf /tmp/ai-security-analyst-backend
+
 WORKDIR /workspace
