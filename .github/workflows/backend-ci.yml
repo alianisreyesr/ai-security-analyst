@@ -130,7 +130,7 @@ jobs:
         run: docker build -t ai-security-analyst-backend:test ./backend
 
       - name: Scan backend container
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ai-security-analyst-backend:test
           format: table
