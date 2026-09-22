@@ -3,7 +3,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.ai.prompts import build_analyst_messages
-from app.ai.providers import AIProvider, AIProviderError, DisabledProvider, get_ai_provider
+from app.ai.providers import (
+    AIProvider,
+    AIProviderError,
+    DisabledProvider,
+    get_ai_provider,
+)
 from app.core.config import settings
 from app.models.threat import Threat
 from app.models.threat_analysis import ThreatAnalysis
@@ -72,7 +77,11 @@ def analyze_threat(
     threat: Threat,
     provider: AIProvider | None = None,
 ) -> ThreatAnalysis:
-    selected_provider = provider or get_ai_provider()
+    try:
+        selected_provider = provider or get_ai_provider()
+    except AIProviderError:
+        selected_provider = DisabledProvider()
+
     messages = build_analyst_messages(threat)
 
     try:
