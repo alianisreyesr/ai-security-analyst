@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 class BatchIngestRequest(BaseModel):
     format: Literal["json", "csv", "log", "txt"]
-    content: str = Field(min_length=1, max_length=1_000_000)
+    content: str = Field(min_length=1)
 
 
 class BatchIngestResponse(BaseModel):
