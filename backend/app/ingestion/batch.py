@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.ingestion.parsers.dispatcher import parse_log_line
 from app.schemas.security_event import SecurityEventCreate
 
+
 class BatchParseError(ValueError):
     pass
 
