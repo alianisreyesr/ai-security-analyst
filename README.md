@@ -85,6 +85,56 @@ See [AI_SECURITY_ANALYST_PLAN.md](AI_SECURITY_ANALYST_PLAN.md) for the full prod
 - Architecture and process diagrams are stored as **Mermaid source with explicit styling/colors**.
 - Blocking/enforcement actions require human review.
 
+## Open in Visual Studio Code Dev Container
+
+This repository includes a ready-to-use VS Code Dev Container with Python 3.12 and PostgreSQL 17.
+
+### Requirements
+
+- Docker Desktop (or a compatible Docker Engine)
+- Visual Studio Code
+- The **Dev Containers** extension
+
+### Open the project
+
+1. Clone the repository and open it in VS Code.
+2. Open the Command Palette with `F1` / `Cmd+Shift+P`.
+3. Run **Dev Containers: Reopen in Container**.
+4. Let VS Code build the development image and start PostgreSQL.
+5. The container automatically runs Alembic migrations.
+
+Once connected, the repository is mounted at:
+
+```text
+/workspace
+```
+
+### Run the API
+
+Use **Run and Debug → FastAPI: Dev Server**, press `F5`, or run:
+
+```bash
+cd /workspace/backend
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Then open:
+
+```text
+http://localhost:8000/health
+```
+
+### Useful VS Code tasks
+
+Open **Terminal → Run Task** and choose:
+
+- `Backend: Run tests`
+- `Backend: Ruff`
+- `Database: Upgrade`
+- `Backend: Run API`
+
+If `.devcontainer/` changes, run **Dev Containers: Rebuild Container**.
+
 ## Quick start
 
 ### Requirements
