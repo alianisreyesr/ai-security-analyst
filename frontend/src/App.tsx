@@ -163,6 +163,7 @@ function App() {
               key={item}
               className={view === item ? "nav-item active" : "nav-item"}
               onClick={() => setView(item)}
+              aria-current={view === item ? "page" : undefined}
             >
               {item[0].toUpperCase() + item.slice(1)}
             </button>
@@ -196,8 +197,8 @@ function App() {
           </div>
         </header>
 
-        {error && <div className="notice error">{error}</div>}
-        {actionMessage && <div className="notice success">{actionMessage}</div>}
+        {error && <div className="notice error" role="alert">{error}</div>}
+        {actionMessage && <div className="notice success" role="status" aria-live="polite">{actionMessage}</div>}
 
         {view === "overview" && (
           <>
@@ -370,14 +371,26 @@ function App() {
 
       {selectedThreat && (
         <div className="drawer-backdrop" onClick={() => setSelectedThreat(null)}>
-          <aside className="drawer" onClick={(event) => event.stopPropagation()}>
+          <aside
+            className="drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="threat-drawer-title"
+            onClick={(event) => event.stopPropagation()}
+          >
             <div className="drawer-header">
               <div>
                 <span className={severityClass(selectedThreat.severity)}>{selectedThreat.severity}</span>
-                <h2>{selectedThreat.title}</h2>
+                <h2 id="threat-drawer-title">{selectedThreat.title}</h2>
                 <p>{selectedThreat.rule_id}</p>
               </div>
-              <button className="icon-button" onClick={() => setSelectedThreat(null)}>×</button>
+              <button
+                className="icon-button"
+                aria-label="Close threat details"
+                onClick={() => setSelectedThreat(null)}
+              >
+                ×
+              </button>
             </div>
 
             <div className="drawer-metrics">
