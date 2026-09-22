@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 from app.core.config import settings
 from app.detection.engine import run_detection
 from app.detection.risk import severity_from_score
-from app.detection.rules import detect_port_scan, detect_request_burst
+from app.detection.rules import detect_brute_force, detect_port_scan, detect_request_burst
 from app.models.security_event import SecurityEvent
 
 
@@ -151,9 +151,10 @@ def test_rule_failure_does_not_interrupt_other_rules() -> None:
     def broken_rule(_: list[SecurityEvent]) -> list:
         raise RuntimeError("synthetic rule failure")
 
-    findings = run_detection(events, rules=(broken_rule,))
+    findings = run_detection(events, rules=(broken_rule, detect_brute_force))
 
-    assert findings == []
+    assert len(findings) == 1
+    assert findings[0].rule_id == "auth.brute_force"
 
 
 def test_port_scan_can_exclude_known_source() -> None:
