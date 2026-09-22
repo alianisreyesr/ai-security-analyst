@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
 
 from app.detection.engine import run_detection
+from app.detection.rules import detect_port_scan, detect_request_burst
 from app.detection.risk import severity_from_score
 from app.models.security_event import SecurityEvent
 
@@ -129,3 +130,63 @@ def test_severity_boundaries() -> None:
     assert severity_from_score(60) == "high"
     assert severity_from_score(80) == "critical"
     assert severity_from_score(120) == "critical"
+
+
+def test_rule_failure_does_not_interrupt_other_rules() -> None:
+    start = datetime(2026, 9, 21, 20, 0, tzinfo=UTC)
+    events = [
+        _event(
+            index,
+            start + timedelta(seconds=index * 20),
+            source_ip="203.0.113.42",
+            event_type="authentication_failure",
+            source="linux_ssh",
+            username="admin",
+            destination_port=22,
+        )
+        for index in range(1, 7)
+    ]
+
+    def broken_rule(_: list[SecurityEvent]) -> list:
+        raise RuntimeError("synthetic rule failure")
+
+    findings = run_detection(events, rules=(broken_rule,))
+
+    assert findings == []
+
+
+def test_port_scan_can_exclude_known_source() -> None:
+    start = datetime(2026, 9, 21, 20, 0, tzinfo=UTC)
+    events = [
+        _event(
+            index,
+            start + timedelta(seconds=index * 5),
+            source_ip="198.51.100.7",
+            event_type="firewall_deny",
+            source="firewall",
+            destination_port=20 + index,
+        )
+        for index in range(1, 12)
+    ]
+
+    findings = detect_port_scan(events, excluded_source_ips={"198.51.100.7"})
+
+    assert findings == []
+
+
+def test_request_burst_can_exclude_known_source() -> None:
+    start = datetime(2026, 9, 21, 20, 0, tzinfo=UTC)
+    events = [
+        _event(
+            index,
+            start + timedelta(milliseconds=index * 500),
+            source_ip="198.51.100.9",
+            event_type="http_request",
+            source="web_access",
+        )
+        for index in range(1, 51)
+    ]
+
+    findings = detect_request_burst(events, excluded_source_ips={"198.51.100.9"})
+
+    assert findings == []
