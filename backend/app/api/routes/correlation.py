@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
+from app.security.auth import require_admin
 from app.schemas.correlation import (
     CorrelationRunRequest,
     CorrelationRunResponse,
@@ -12,7 +13,11 @@ from app.services.correlation import run_correlation
 router = APIRouter(prefix="/api/v1/correlation", tags=["correlation"])
 
 
-@router.post("/run", response_model=CorrelationRunResponse)
+@router.post(
+    "/run",
+    response_model=CorrelationRunResponse,
+    dependencies=[Depends(require_admin)],
+)
 def correlate(
     payload: CorrelationRunRequest,
     db: Session = Depends(get_db),
