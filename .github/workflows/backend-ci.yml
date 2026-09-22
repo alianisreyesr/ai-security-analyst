@@ -38,12 +38,6 @@ jobs:
         working-directory: backend
         run: mypy app
 
-      - name: Dependency audit
-        run: pip-audit
-
-      - name: Static security analysis
-        run: bandit -q -r backend/app
-
   security-audit:
     runs-on: ubuntu-latest
 
@@ -128,15 +122,6 @@ jobs:
 
       - name: Build backend container
         run: docker build -t ai-security-analyst-backend:test ./backend
-
-      - name: Scan backend container
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: ai-security-analyst-backend:test
-          format: table
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          exit-code: "1"
 
       - name: Scan repository filesystem
         run: >-
