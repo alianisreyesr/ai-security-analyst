@@ -28,3 +28,4 @@ build/
 .vscode/
 
 coverage.xml
+*.egg-info/

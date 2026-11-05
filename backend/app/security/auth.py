@@ -27,7 +27,7 @@ def validate_security_configuration() -> None:
             "AUTH_ENABLED requires both ANALYST_API_KEY and ADMIN_API_KEY."
         )
 
-    if settings.app_env.lower() == "production" and not settings.auth_enabled:
+    if settings.app_env.strip().lower() in {"production", "prod"} and not settings.auth_enabled:
         raise RuntimeError("Authentication must be enabled in production.")
 
 

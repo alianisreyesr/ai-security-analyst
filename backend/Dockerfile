@@ -22,6 +22,9 @@ RUN python -m pip install --no-cache-dir --upgrade \
 assert tuple(map(int, version('msgpack').split('.')[:3])) >= (1, 2, 1); \
 assert tuple(map(int, version('setuptools').split('.')[:2])) >= (78, 1)"
 
+RUN useradd --system --no-create-home --uid 10001 app
+USER app
+
 EXPOSE 8000
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

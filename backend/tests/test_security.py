@@ -169,11 +169,12 @@ def test_audit_log_records_actor_without_secret(
         settings.admin_api_key = old_admin
 
 
-def test_production_requires_authentication() -> None:
+@pytest.mark.parametrize("env", ["production", "Production", " prod "])
+def test_production_requires_authentication(env: str) -> None:
     old_env = settings.app_env
     old_enabled = settings.auth_enabled
     try:
-        settings.app_env = "production"
+        settings.app_env = env
         settings.auth_enabled = False
 
         with pytest.raises(RuntimeError, match="Authentication must be enabled"):
@@ -181,3 +182,18 @@ def test_production_requires_authentication() -> None:
     finally:
         settings.app_env = old_env
         settings.auth_enabled = old_enabled
+
+
+def test_deployment_files_are_hardened() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    backend = (root / "backend/Dockerfile").read_text()
+    frontend = (root / "frontend/Dockerfile").read_text()
+    compose = (root / "docker-compose.yml").read_text()
+
+    assert "USER app" in backend
+    assert "nginx-unprivileged" in frontend
+    assert '"127.0.0.1:8000:8000"' in compose
+    assert '"8000:8000"' not in compose
+    assert "dev" in (root / ".env.example").read_text().lower()
