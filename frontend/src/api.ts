@@ -10,15 +10,27 @@ import type {
 
 const API_KEY_STORAGE = "ai-security-analyst-api-key";
 
+// The key lives in sessionStorage so it is dropped when the tab closes and is
+// never persisted to disk. Any XSS could still read it while the tab is open.
 export function getApiKey(): string {
-  return localStorage.getItem(API_KEY_STORAGE) ?? "";
+  try {
+    // Remove keys persisted by earlier versions that used localStorage.
+    localStorage.removeItem(API_KEY_STORAGE);
+    return sessionStorage.getItem(API_KEY_STORAGE) ?? "";
+  } catch {
+    return "";
+  }
 }
 
 export function setApiKey(value: string): void {
-  if (value.trim()) {
-    localStorage.setItem(API_KEY_STORAGE, value.trim());
-  } else {
-    localStorage.removeItem(API_KEY_STORAGE);
+  try {
+    if (value.trim()) {
+      sessionStorage.setItem(API_KEY_STORAGE, value.trim());
+    } else {
+      sessionStorage.removeItem(API_KEY_STORAGE);
+    }
+  } catch {
+    // Storage may be unavailable (private mode); the key is then simply not retained.
   }
 }
 

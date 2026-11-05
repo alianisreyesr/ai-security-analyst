@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     rate_limit_enabled: bool = False
     rate_limit_requests_per_minute: int = 120
+    # Comma separated IPs/CIDRs of reverse proxies whose X-Forwarded-For is trusted.
+    trusted_proxies: str = ""
 
     cors_allowed_origins: str = ""
     allowed_hosts: str = ""
@@ -58,6 +60,14 @@ class Settings(BaseSettings):
         return [
             value.strip()
             for value in self.cors_allowed_origins.split(",")
+            if value.strip()
+        ]
+
+    @property
+    def trusted_proxy_list(self) -> list[str]:
+        return [
+            value.strip()
+            for value in self.trusted_proxies.split(",")
             if value.strip()
         ]
 

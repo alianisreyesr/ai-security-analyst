@@ -6,7 +6,7 @@ logs, normalizes them into one event contract, applies deterministic detection a
 risk scoring, and uses AI only to explain evidence—not to invent or replace it.
 
 > **Status:** v1.0.0 stable release  
-> **Validated baseline:** 73+ tests, at least 85% backend line coverage  
+> **Validated baseline:** 110+ tests, at least 85% backend line coverage  
 > **License:** MIT
 
 ## Why it matters

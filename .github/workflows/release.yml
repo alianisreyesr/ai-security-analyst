@@ -38,12 +38,13 @@ jobs:
           DATABASE_URL: "sqlite+pysqlite:///:memory:"
           APP_ENV: test
         run: |
-          pip install -e ".[dev]"
+          pip install -r requirements-dev.txt
+          pip install --no-deps -e .
           pytest --cov=app --cov-report=term-missing --cov-fail-under=85
       - name: Build frontend
         working-directory: frontend
         run: |
-          npm install
+          npm ci
           npm run typecheck
           npm run build
       - name: Package source and checksum

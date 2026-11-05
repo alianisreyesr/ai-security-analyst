@@ -28,6 +28,20 @@ The current foundation provides two roles:
 
 Use separate keys. Do not reuse provider or database credentials as application API keys.
 
+The dashboard keeps the key you enter in `sessionStorage` (cleared when the tab closes,
+never written to disk). Any script running in the page could still read it, which is why
+nginx serves a strict Content-Security-Policy and the frontend has no HTML injection sinks.
+
+## Reverse proxies and rate limiting
+
+By default the rate limiter keys on the socket peer address. Behind a reverse proxy
+(such as the bundled nginx) every client would share the proxy IP, so set
+`TRUSTED_PROXIES` to the proxy address or CIDR. Only then is `X-Forwarded-For` honoured,
+and the right-most address that is not a trusted proxy is used, so clients cannot spoof
+their identity. Request bodies are limited to `MAX_REQUEST_BYTES` for both
+`Content-Length` and chunked uploads, and client-supplied `X-Request-ID` values are only
+accepted when they match `[A-Za-z0-9._-]{1,64}`.
+
 ## HTTP boundary
 
 Configure trusted hosts and terminate TLS at the deployment boundary. Production responses include HSTS. API responses include defensive security headers and no-store caching where applicable.

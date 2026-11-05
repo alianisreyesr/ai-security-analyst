@@ -25,6 +25,17 @@ def _sanitize_untrusted(value: Any) -> Any:
     return str(value)[:_MAX_STRING_LENGTH]
 
 
+def _serialize_evidence(value: Any) -> str:
+    """Serialize evidence as JSON that cannot contain a literal ``<`` or ``>``.
+
+    ``\\u003c`` / ``\\u003e`` are valid JSON escapes, so the model still reads the
+    original text, but attacker controlled evidence can no longer emit a closing
+    ``</untrusted_security_evidence>`` tag (or any other tag) into the prompt.
+    """
+    text = json.dumps(value, ensure_ascii=False, sort_keys=True)
+    return text.replace("<", "\\u003c").replace(">", "\\u003e")
+
+
 def build_analyst_messages(threat: Threat) -> list[dict[str, str]]:
     evidence = {
         "rule_id": threat.rule_id,
@@ -53,7 +64,7 @@ def build_analyst_messages(threat: Threat) -> list[dict[str, str]]:
     user_message = (
         f"Prompt template version: {settings.ai_prompt_template_version}\n"
         "<untrusted_security_evidence>\n"
-        f"{json.dumps(sanitized, ensure_ascii=False, sort_keys=True)}\n"
+        f"{_serialize_evidence(sanitized)}\n"
         "</untrusted_security_evidence>"
     )
 

@@ -31,7 +31,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install --no-package-lock
+        run: npm ci
+
+      - name: Audit production dependencies
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Typecheck and build
         working-directory: frontend

@@ -1,3 +1,5 @@
+import logging
+
 from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -13,6 +15,8 @@ from app.core.config import settings
 from app.models.threat import Threat
 from app.models.threat_analysis import ThreatAnalysis
 from app.schemas.ai_analysis import AnalystOutput
+
+logger = logging.getLogger("ai_security_analyst.ai")
 
 
 def _fallback_output(threat: Threat) -> AnalystOutput:
@@ -95,7 +99,15 @@ def analyze_threat(
             provider=response.provider,
             model=response.model,
         )
-    except (AIProviderError, ValidationError, ValueError, TypeError):
+    except (AIProviderError, ValidationError, ValueError, TypeError) as exc:
+        logger.warning(
+            "ai_analysis_fallback threat_id=%s provider=%s reason=%s: %s",
+            threat.id,
+            getattr(selected_provider, "name", "unknown"),
+            type(exc).__name__,
+            # Never log the model response; only the exception summary line.
+            str(exc).splitlines()[0][:200] if str(exc) else "",
+        )
         fallback = _fallback_output(threat)
         provider_name = getattr(selected_provider, "name", "unknown")
         provider_model = getattr(selected_provider, "model", "unknown")

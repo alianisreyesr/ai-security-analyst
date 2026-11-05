@@ -168,7 +168,7 @@ function App() {
 
   function saveApiKey() {
     setApiKey(apiKey);
-    setActionMessage(apiKey.trim() ? "API key saved locally." : "API key cleared.");
+    setActionMessage(apiKey.trim() ? "API key saved for this browser tab." : "API key cleared.");
     void refresh();
   }
 

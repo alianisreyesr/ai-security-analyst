@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY pyproject.toml ./
+COPY pyproject.toml requirements.txt ./
 COPY app ./app
 COPY alembic ./alembic
 COPY alembic.ini ./
@@ -14,7 +14,8 @@ RUN python -m pip install --no-cache-dir --upgrade \
       "pip>=26" \
       "setuptools>=78.1.1" \
       "msgpack>=1.2.1" \
-    && python -m pip install --no-cache-dir . \
+    && python -m pip install --no-cache-dir -r requirements.txt \
+    && python -m pip install --no-cache-dir --no-deps . \
     && rm -rf \
       /usr/local/lib/python3.12/site-packages/setuptools-70.3.0.dist-info \
       /usr/local/lib/python3.12/site-packages/msgpack-1.1.2.dist-info \

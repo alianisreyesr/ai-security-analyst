@@ -28,6 +28,7 @@ Pydantic reads the variables below; Docker Compose additionally consumes the thr
 | `ADMIN_API_KEY` | empty | Key for all routes, including administrative operations |
 | `RATE_LIMIT_ENABLED` | `false` | Enable in-memory per-client throttling |
 | `RATE_LIMIT_REQUESTS_PER_MINUTE` | `120` | Per-process request allowance |
+| `TRUSTED_PROXIES` | empty | Comma-separated IPs/CIDRs of reverse proxies whose `X-Forwarded-For` is trusted for rate limiting; empty uses the socket peer address |
 | `CORS_ALLOWED_ORIGINS` | empty | Comma-separated exact browser origins |
 | `ALLOWED_HOSTS` | empty | Comma-separated trusted Host values |
 | `ENABLE_API_DOCS` | `false` | Expose OpenAPI routes in production |

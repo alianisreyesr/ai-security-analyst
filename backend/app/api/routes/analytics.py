@@ -1,8 +1,9 @@
 from typing import Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
+from app.core.http import HTTP_422_UNPROCESSABLE
 from app.db.session import get_db
 from app.schemas.analytics import (
     AnalyticsRebuildRequest,
@@ -35,7 +36,7 @@ def rebuild_analytics(
         )
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=HTTP_422_UNPROCESSABLE,
             detail=str(exc),
         ) from exc
 

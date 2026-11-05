@@ -67,6 +67,11 @@ class CompatibleReputationProvider:
         except (httpx.HTTPError, ValueError) as exc:
             raise ReputationProviderError("IP reputation request failed.") from exc
 
+        if not isinstance(payload, dict):
+            raise ReputationProviderError(
+                "IP reputation provider returned an unsupported response."
+            )
+
         verdict = payload.get("verdict")
         score = payload.get("score")
         details = payload.get("details", {})

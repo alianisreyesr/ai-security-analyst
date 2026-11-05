@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.http import HTTP_422_UNPROCESSABLE
 from app.db.session import get_db
 from app.models.threat import Threat
 from app.schemas.threat_intel import ReputationResponse
@@ -21,7 +22,7 @@ def reputation_lookup(
         ip_address(ip_value)
     except ValueError as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=HTTP_422_UNPROCESSABLE,
             detail="Invalid IP address.",
         ) from exc
 
@@ -41,7 +42,7 @@ def threat_reputation(
         )
     if threat.source_ip is None:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=HTTP_422_UNPROCESSABLE,
             detail="Threat has no source IP.",
         )
 

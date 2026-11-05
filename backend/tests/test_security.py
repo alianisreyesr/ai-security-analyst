@@ -196,4 +196,9 @@ def test_deployment_files_are_hardened() -> None:
     assert "nginx-unprivileged" in frontend
     assert '"127.0.0.1:8000:8000"' in compose
     assert '"8000:8000"' not in compose
+    nginx = (root / "frontend/nginx.conf").read_text()
+    for header in ("X-Content-Type-Options", "X-Frame-Options", "Content-Security-Policy"):
+        assert header in nginx
+    assert "client_max_body_size" in nginx
+    assert "npm ci" in frontend
     assert "dev" in (root / ".env.example").read_text().lower()
