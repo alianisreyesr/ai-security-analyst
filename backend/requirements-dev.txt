@@ -104,7 +104,7 @@ psycopg==3.3.8
     # via ai-security-analyst-backend (pyproject.toml)
 psycopg-binary==3.3.8 ; implementation_name != 'pypy'
     # via psycopg
-py-serializable==2.1.0
+py-serializable==2.2.0
     # via cyclonedx-python-lib
 pydantic==2.14.3
     # via
