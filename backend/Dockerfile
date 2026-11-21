@@ -3,6 +3,12 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Apply Debian security updates for packages in the base image (e.g. zlib1g
+# CVE-2026-85091) so the Trivy image scan does not depend on upstream rebuilds.
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY pyproject.toml requirements.txt ./

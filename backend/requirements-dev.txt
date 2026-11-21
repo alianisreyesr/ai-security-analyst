@@ -100,9 +100,9 @@ pluggy==1.7.0
     # via
     #   pytest
     #   pytest-cov
-psycopg==3.3.8
+psycopg==3.3.9
     # via ai-security-analyst-backend (pyproject.toml)
-psycopg-binary==3.3.8 ; implementation_name != 'pypy'
+psycopg-binary==3.3.9 ; implementation_name != 'pypy'
     # via psycopg
 py-serializable==2.1.0
     # via cyclonedx-python-lib
