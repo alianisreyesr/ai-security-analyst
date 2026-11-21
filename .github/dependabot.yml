@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      # psycopg and its compiled companion must always share the same version.
+      psycopg:
+        patterns:
+          - "psycopg"
+          - "psycopg-binary"
+          - "psycopg-pool"
   - package-ecosystem: npm
     directory: /frontend
     schedule:
