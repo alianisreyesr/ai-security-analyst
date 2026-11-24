@@ -11,6 +11,13 @@ updates:
     cooldown:
       default-days: 7
     groups:
+      # psycopg and its compiled companion must always share the same version.
+      # Listed first so it is matched before the catch-all group below.
+      psycopg:
+        patterns:
+          - "psycopg"
+          - "psycopg-binary"
+          - "psycopg-pool"
       minor-and-patch:
         update-types:
           - minor
