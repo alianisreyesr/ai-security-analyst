@@ -152,7 +152,7 @@ sqlalchemy==2.1.8
     #   alembic
 starlette==1.10.0
     # via fastapi
-stevedore==5.9.1
+stevedore==5.10.0
     # via bandit
 tomli==2.5.0
     # via pip-audit
