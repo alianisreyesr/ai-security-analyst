@@ -1,31 +1,68 @@
+# Monthly cadence; minor/patch updates are grouped into one PR per ecosystem.
+# Major-version bumps stay as individual PRs so they can be reviewed on their own.
+# `cooldown` skips releases younger than 7 days to avoid chasing every new release.
 version: 2
 updates:
   - package-ecosystem: pip
     directory: /backend
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
     groups:
       # psycopg and its compiled companion must always share the same version.
+      # Listed first so it is matched before the catch-all group below.
       psycopg:
         patterns:
           - "psycopg"
           - "psycopg-binary"
           - "psycopg-pool"
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
   - package-ecosystem: npm
     directory: /frontend
     schedule:
-      interval: weekly
+      interval: monthly
     open-pull-requests-limit: 5
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - "*"
   - package-ecosystem: docker
     directory: /backend
     schedule:
-      interval: weekly
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
   - package-ecosystem: docker
     directory: /frontend
     schedule:
-      interval: weekly
+      interval: monthly
+    cooldown:
+      default-days: 7
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
